@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    {{ question }}
+    <ul>
+        {% for option in question.option_set.all %}
+            <li>{{ option }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

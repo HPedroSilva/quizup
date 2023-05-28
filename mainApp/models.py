@@ -35,7 +35,7 @@ class Option(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     score = models.IntegerField("Pontuação do usuário")
-    
+
     def __str__(self):
         return str(self.user.first_name)
 
@@ -50,5 +50,5 @@ class Match(models.Model):
     end_date = models.DateField()
     users = models.ManyToManyField(UserProfile, related_name="users_match")
     winner = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="user_winner", null=True)
-    level = models.CharField("Nível da pergunta", max_length=1, choices=LEVEL_CHOICES)
+    level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
     categories = models.ManyToManyField(Category)
