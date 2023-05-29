@@ -39,16 +39,18 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user.first_name)
 
+class Match(models.Model):
+    start_date = models.DateField(default=timezone.now)
+    end_date = models.DateField(null=True)
+    users = models.ManyToManyField(UserProfile, related_name="users_match")
+    winner = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="user_winner", null=True)
+    level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
+    categories = models.ManyToManyField(Category)
+    questions = models.ManyToManyField(Question)
+
 class UserAnswer(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.ForeignKey(Option, on_delete=models.PROTECT)
     date = models.DateTimeField(default=timezone.now)
-
-class Match(models.Model):
-    start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField()
-    users = models.ManyToManyField(UserProfile, related_name="users_match")
-    winner = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="user_winner", null=True)
-    level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
-    categories = models.ManyToManyField(Category)
+    match_answer = models.ForeignKey(Match, on_delete=models.CASCADE)
