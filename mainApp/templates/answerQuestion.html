@@ -1,4 +1,37 @@
 {% extends 'base.html' %}
+{% block js %}
+    <script>
+        window.onload = () => {
+            fetch("{% url 'answer_question' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({"answer": ''})
+            })
+            .then(response => response)
+            .then(result => {console.log(result);})
+            .catch(error => {console.error(error);});
+              
+            // Function to retrieve the CSRF token from cookies
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        }
+    </script>
+{% endblock js %}
 {% block content %}
     {{ question }}
     <ul>
