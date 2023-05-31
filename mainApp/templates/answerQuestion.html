@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block js %}
     <script>
-        window.onload = () => {
+        function answer(answer_pk) {
             fetch("{% url 'answer_question' %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: JSON.stringify({"answer": ''})
+                body: JSON.stringify({"answer": answer_pk})
             })
             .then(response => response)
-            .then(result => {console.log(result);})
+            .then(result => {console.log(result.headers.get("judgment"));})
             .catch(error => {console.error(error);});
               
             // Function to retrieve the CSRF token from cookies
@@ -34,9 +34,8 @@
 {% endblock js %}
 {% block content %}
     {{ question }}
-    <ul>
-        {% for option in question.option_set.all %}
-            <li>{{ option }}</li>
-        {% endfor %}
-    </ul>
+    {% for option in question.option_set.all %}
+        <br>
+        <button onclick="answer({{ option.pk }})">{{ option }}</button>
+    {% endfor %}
 {% endblock content %}

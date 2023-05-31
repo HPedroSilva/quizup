@@ -22,6 +22,10 @@ class Question(models.Model):
     level = models.CharField("Nível da pergunta", max_length=1, choices=LEVEL_CHOICES)
     active = models.BooleanField("Pergunta está ativa?", default=True) # Define se a questão está ou não ativa para ser utilizada
     
+    @property
+    def answer(self):
+        return self.option_set.all().filter(answer = True).first()
+
     def __str__(self):
         return str(self.text)
 
