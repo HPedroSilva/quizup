@@ -12,3 +12,6 @@ class OptionAdmin(admin.ModelAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     pass
+@admin.register(Match)
+class MatchAdmin(admin.ModelAdmin):
+    pass

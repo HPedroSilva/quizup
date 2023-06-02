@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+import random
 
 LEVEL_CHOICES = (
         ("1", "Fácil"),
@@ -45,13 +46,23 @@ class UserProfile(models.Model):
 
 class Match(models.Model):
     start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField(null=True)
+    end_date = models.DateField(null=True, blank=True)
     users = models.ManyToManyField(UserProfile, related_name="users_match")
-    winner = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="user_winner", null=True)
+    winner = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="user_winner", null=True, blank=True)
     level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
     categories = models.ManyToManyField(Category)
-    questions = models.ManyToManyField(Question)
+    questions = models.ManyToManyField(Question, blank=True)
 
+    class Meta:
+        verbose_name_plural = "matches"
+        
+    def save(self, *args, **kwargs):
+        questions = Question.objects.filter(level=self.level).filter(category__in=self.categories.all())
+        questions_pks = list(questions.values_list('pk', flat=True))
+        random_pks = random.choices(questions_pks, k=3)
+        self.questions.set(questions.filter(pk__in=random_pks))
+        print(self.questions.all())
+        super(Match, self).save(*args, **kwargs)
 class UserAnswer(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
