@@ -1,7 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 import random
+from django.contrib.auth.models import User
 
 LEVEL_CHOICES = (
         ("1", "Fácil"),
@@ -56,16 +58,18 @@ class Match(models.Model):
     class Meta:
         verbose_name_plural = "matches"
         
-    def save(self, *args, **kwargs):
-        questions = Question.objects.filter(level=self.level).filter(category__in=self.categories.all())
-        questions_pks = list(questions.values_list('pk', flat=True))
-        random_pks = random.choices(questions_pks, k=3)
-        self.questions.set(questions.filter(pk__in=random_pks))
-        print(self.questions.all())
-        super(Match, self).save(*args, **kwargs)
 class UserAnswer(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.ForeignKey(Option, on_delete=models.PROTECT)
     date = models.DateTimeField(default=timezone.now)
     match_answer = models.ForeignKey(Match, on_delete=models.CASCADE)
+
+@receiver(post_save, sender=Match)
+def match_post_save(sender, instance, **kwargs):
+    questions = Question.objects.filter(level=instance.level)
+    questions_pks = list(questions.values_list('pk', flat=True))
+    random_pks = random.choices(questions_pks, k=3)
+    questions = questions.filter(pk__in=random_pks)
+    instance.questions.set(questions)
+    Match.objects.filter(pk=instance.pk).update()

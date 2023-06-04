@@ -1,10 +1,12 @@
 from typing import Any, Dict
 from django.shortcuts import render
-from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
-from mainApp.models import Question
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 import json
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import CreateView
+from mainApp.models import Question, Match
 
 class AnswerQuestionView(TemplateView):
     """
@@ -28,3 +30,9 @@ class AnswerQuestionView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['question'] = self.question
         return context
+
+class CreateMatchView(CreateView):
+    model = Match
+    fields = ["start_date", "users", "level", "categories"]
+    template_name = "create-match-form.html"
+    success_url = reverse_lazy("admin:index")
