@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 import json
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
+from django.views.generic.list import ListView
 from mainApp.models import Question, Match
 
 class AnswerQuestionView(TemplateView):
@@ -34,5 +35,16 @@ class AnswerQuestionView(TemplateView):
 class CreateMatchView(CreateView):
     model = Match
     fields = ["start_date", "users", "level", "categories"]
-    template_name = "create-match-form.html"
+    template_name = "createMatchForm.html"
     success_url = reverse_lazy("admin:index")
+
+class UserMatchesView(ListView):
+    model = Match
+    template_name = "userMatches.html"
+    context_object_name = "userMatches"
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        userMatches = self.get_queryset().filter(users=self.request.user)
+        context["userMatches"] = userMatches
+        return context

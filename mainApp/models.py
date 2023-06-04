@@ -49,8 +49,8 @@ class UserProfile(models.Model):
 class Match(models.Model):
     start_date = models.DateField(default=timezone.now)
     end_date = models.DateField(null=True, blank=True)
-    users = models.ManyToManyField(UserProfile, related_name="users_match")
-    winner = models.ForeignKey(UserProfile, on_delete=models.PROTECT, related_name="user_winner", null=True, blank=True)
+    users = models.ManyToManyField(User, related_name="users_match")
+    winner = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_winner", null=True, blank=True)
     level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
     categories = models.ManyToManyField(Category)
     questions = models.ManyToManyField(Question, blank=True)
@@ -59,7 +59,7 @@ class Match(models.Model):
         verbose_name_plural = "matches"
         
 class UserAnswer(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.ForeignKey(Option, on_delete=models.PROTECT)
     date = models.DateTimeField(default=timezone.now)
