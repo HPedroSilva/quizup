@@ -15,3 +15,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
     pass
+@admin.register(UserAnswer)
+class UserAnswerAdmin(admin.ModelAdmin):
+    pass

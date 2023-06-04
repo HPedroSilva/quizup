@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 {% block js %}
     <script>
-        function answer(answer_pk) {
+        function answer(option_pk) {
             fetch("{% url 'answer_question' %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: JSON.stringify({"answer": answer_pk})
+                body: JSON.stringify({
+                    "match": {{ match.pk }},
+                    "question": {{ question.pk }},
+                    "option": option_pk
+                })
             })
             .then(response => response)
             .then(result => {console.log(result.headers.get("judgment"));})
@@ -33,9 +37,14 @@
     </script>
 {% endblock js %}
 {% block content %}
-    {{ question }}
-    {% for option in question.option_set.all %}
-        <br>
-        <button onclick="answer({{ option.pk }})">{{ option }}</button>
-    {% endfor %}
+    {% if question %}
+        {{ question }}
+        {% for option in question.option_set.all %}
+            <br>
+            <button onclick="answer({{ option.pk }})">{{ option }}</button>
+        {% endfor %}    
+        <a href="{% url 'mainapp:answer_question' %}">Próxima</a>
+    {% else %}
+        <p>Você já respondeu todas as perguntas da partida</p>
+    {% endif %}
 {% endblock content %}

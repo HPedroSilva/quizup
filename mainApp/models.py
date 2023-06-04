@@ -65,6 +65,11 @@ class UserAnswer(models.Model):
     date = models.DateTimeField(default=timezone.now)
     match_answer = models.ForeignKey(Match, on_delete=models.CASCADE)
 
+    @property
+    def judgment(self):
+        # Returna True se a resposta da perguta estiver correta e False caso contrário
+        return self.option == self.question.answer
+
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):
     questions = Question.objects.filter(level=instance.level)
