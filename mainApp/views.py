@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.db.models import Q
 import json
@@ -21,13 +21,18 @@ class AnswerQuestionView(TemplateView):
     def get(self, request, *args, **kwargs):
         match_pk = request.GET.get("match")
         match = get_object_or_404(Match, pk=match_pk)
-        self.match = match
-        self.question = match.questions.all().exclude(Q(Q(useranswer__user = request.user) and Q(useranswer__match_answer = self.match))).first()
-        return super(AnswerQuestionView, self).get(request, *args, **kwargs)
+        if request.user in match.users.all():
+            self.match = match
+            self.question = match.questions.all().exclude(Q(Q(useranswer__user = request.user) and Q(useranswer__match_answer = self.match))).first()
+            return super(AnswerQuestionView, self).get(request, *args, **kwargs)
+        else:
+            return HttpResponse("Você não está nessa partida")
+
     
     def post(self, request, *args, **kwargs):
         # Julgar a resposta do usuário para a questão que ele recebeu
         # Falta adicionar verificações nos dados, pois serão recebidos do lado do usuário
+        # Verificar também se a questão já foi respondida por esse usuário na partida 
         data = json.loads(request.body)
         match_pk = data.get("match")
         match = get_object_or_404(Match, pk=match_pk)
