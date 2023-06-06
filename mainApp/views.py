@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.db.models import Q
 import json
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
@@ -21,7 +22,7 @@ class AnswerQuestionView(TemplateView):
         match_pk = request.GET.get("match")
         match = get_object_or_404(Match, pk=match_pk)
         self.match = match
-        self.question = match.questions.all().exclude(useranswer__user=request.user).first()
+        self.question = match.questions.all().exclude(Q(Q(useranswer__user = request.user) and Q(useranswer__match_answer = self.match))).first()
         return super(AnswerQuestionView, self).get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
