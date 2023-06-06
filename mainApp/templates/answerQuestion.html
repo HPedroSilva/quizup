@@ -2,7 +2,7 @@
 {% block js %}
     <script>
         function answer(option_pk) {
-            fetch("{% url 'answer_question' %}", {
+            fetch("{% url 'mainapp:answer_question' %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +43,7 @@
             <br>
             <button onclick="answer({{ option.pk }})">{{ option }}</button>
         {% endfor %}    
-        <a href="{% url 'mainapp:answer_question' %}">Próxima</a>
+        <a href="{{ request.get_full_path }}">Próxima</a>
     {% else %}
         <p>Você já respondeu todas as perguntas da partida</p>
     {% endif %}
