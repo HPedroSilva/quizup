@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.urls import reverse_lazy
 import random
 from django.contrib.auth.models import User
 
@@ -57,6 +58,9 @@ class Match(models.Model):
 
     class Meta:
         verbose_name_plural = "matches"
+    
+    def get_url(self):
+        return f"{reverse_lazy('mainapp:answer_question')}?match={self.pk}"
         
 class UserAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
