@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 import json
 from django.views.generic.base import TemplateView
@@ -10,7 +11,7 @@ from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 from mainApp.models import Option, Question, Match, UserAnswer
 
-class AnswerQuestionView(TemplateView):
+class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     """
     View que gerencia perguntas e respostas do usuário.
     """
@@ -23,7 +24,7 @@ class AnswerQuestionView(TemplateView):
         match = get_object_or_404(Match, pk=match_pk)
         if request.user in match.users.all():
             self.match = match
-            self.question = match.questions.all().exclude(Q(Q(useranswer__user = request.user) and Q(useranswer__match_answer = self.match))).first()
+            self.question = match.questions.all().exclude(Q(Q(useranswer__user = request.user) & Q(useranswer__match_answer = self.match))).first()
             return super(AnswerQuestionView, self).get(request, *args, **kwargs)
         else:
             return HttpResponse("Você não está nessa partida")
@@ -53,13 +54,13 @@ class AnswerQuestionView(TemplateView):
         context['match'] = self.match
         return context
 
-class CreateMatchView(CreateView):
+class CreateMatchView(LoginRequiredMixin, CreateView):
     model = Match
     fields = ["start_date", "users", "level", "categories"]
     template_name = "createMatchForm.html"
     success_url = reverse_lazy("admin:index")
 
-class UserMatchesView(ListView):
+class UserMatchesView(LoginRequiredMixin, ListView):
     model = Match
     template_name = "userMatches.html"
     context_object_name = "userMatches"
