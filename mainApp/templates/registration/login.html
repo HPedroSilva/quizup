@@ -35,4 +35,11 @@
 {# Assumes you set up the password_reset view in your URLconf #}
 {% comment %} <p><a href="{% url 'password_reset' %}">Lost password?</a></p> {% endcomment %}
 
+{% if user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="logout">
+    </form>
+{% endif %}
+
 {% endblock %}
