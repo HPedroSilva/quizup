@@ -78,7 +78,7 @@ class UserAnswer(models.Model):
 def match_post_save(sender, instance, **kwargs):
     questions = Question.objects.filter(level=instance.level)
     questions_pks = list(questions.values_list('pk', flat=True))
-    random_pks = random.choices(questions_pks, k=3)
+    random_pks = random.sample(questions_pks, k=3)
     questions = questions.filter(pk__in=random_pks)
     instance.questions.set(questions)
     Match.objects.filter(pk=instance.pk).update()
