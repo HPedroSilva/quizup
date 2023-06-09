@@ -24,7 +24,8 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         match = get_object_or_404(Match, pk=match_pk)
         if request.user in match.users.all():
             self.match = match
-            self.question = match.questions.all().exclude(Q(Q(useranswer__user = request.user) & Q(useranswer__match_answer = self.match))).first()
+            answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match)
+            self.question = match.questions.exclude(pk__in = answered_questions).first()
             return super(AnswerQuestionView, self).get(request, *args, **kwargs)
         else:
             return HttpResponse("Você não está nessa partida")
