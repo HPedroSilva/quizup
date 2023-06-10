@@ -75,8 +75,8 @@ class UserProfile(models.Model):
         return str(self.user.first_name)
 
     def get_user_match_score(self, match):
-    # Retorna a quantidade de perguntas que o usuário acertou na partida recebida como argumento
-    UserAnswer.objects.filter(match_answer=match, user=self.user, option__answer=True).distinct("question").count()
+        # Retorna a quantidade de perguntas que o usuário acertou na partida recebida como argumento
+        UserAnswer.objects.filter(match_answer=match, user=self.user, option__answer=True).distinct("question").count()
 
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):
