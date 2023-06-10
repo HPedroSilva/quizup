@@ -40,13 +40,6 @@ class Option(models.Model):
     
     def __str__(self):
         return str(self.text)
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score = models.IntegerField("Pontuação do usuário")
-
-    def __str__(self):
-        return str(self.user.first_name)
-
 class Match(models.Model):
     start_date = models.DateField(default=timezone.now)
     end_date = models.DateField(null=True, blank=True)
@@ -74,11 +67,28 @@ class UserAnswer(models.Model):
         # Returna True se a resposta da perguta estiver correta e False caso contrário
         return self.option == self.question.answer
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    score = models.IntegerField("Pontuação do usuário")
+
+    def __str__(self):
+        return str(self.user.first_name)
+
+    def get_user_match_score(self, match):
+    # Retorna a quantidade de perguntas que o usuário acertou na partida recebida como argumento
+    UserAnswer.objects.filter(match_answer=match, user=self.user, option__answer=True).distinct("question").count()
+
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):
+    # Gera uma quantidade específica de questões aleatórias para uma partida, assim que a partida é criada.
     questions = Question.objects.filter(level=instance.level)
     questions_pks = list(questions.values_list('pk', flat=True))
     random_pks = random.sample(questions_pks, k=3)
     questions = questions.filter(pk__in=random_pks)
     instance.questions.set(questions)
     Match.objects.filter(pk=instance.pk).update()
+
+@receiver(post_save, sender=UserAnswer)
+def user_answer_post_save(sender, instance, **kwargs):
+    # Verifica se a partida que recebeu a resposta foi finalizada (todos os jogadores já responderam suas perguntas), se estiver finalizada, calcula quem foi o vencedor e a hora de finalização.
+    pass
