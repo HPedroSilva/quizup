@@ -3,8 +3,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.urls import reverse_lazy
-import random
 from django.contrib.auth.models import User
+import random
+from datetime import datetime
 
 LEVEL_CHOICES = (
         ("1", "Fácil"),
@@ -41,8 +42,8 @@ class Option(models.Model):
     def __str__(self):
         return str(self.text)
 class Match(models.Model):
-    start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField(null=True, blank=True)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(null=True, blank=True)
     users = models.ManyToManyField(User, related_name="users_match")
     winner = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_winner", null=True, blank=True)
     level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
@@ -54,7 +55,41 @@ class Match(models.Model):
     
     def get_url(self):
         return f"{reverse_lazy('mainapp:answer_question')}?match={self.pk}"
-        
+    
+    @property
+    def n_questions(self):
+        # Retorna a quantidade de questões da partida
+        return self.questions.count()
+    
+    def get_user_score(self, user):
+        # Retorna a quantidade de perguntas que o usuário acertou na partida
+        return UserAnswer.objects.filter(match_answer=self, user=user, option__answer=True).distinct("question").count()
+    
+    def get_user_questions_answered(self, user):
+        # Retorna a quantidade de perguntas que o usuário respondeu na partida
+        return UserAnswer.objects.filter(match_answer=self, user=user).distinct("question").count()
+    
+    @property
+    def is_finished(self):
+        # Verifica se a partida foi finalizada (todos os jogadores já responderam suas perguntas)
+        for user in self.users.all():
+            if self.get_user_questions_answered(user) < self.n_questions:
+                return False
+        return True 
+    
+    def get_score(self):
+        # Retorna a pontuação de cada usuário na partida
+        score = []
+        for user in self.users.all():
+            score.append((user, self.get_user_score(user)))
+        score.sort(reverse=True, key=lambda e: e[1])
+        return score
+    
+    def get_winner(self):
+        # Retorna o vencedor da partida, e sua pontuação
+        # Falta tratar o caso de acertarem a mesma quantidade (usar tempo?)
+        return self.get_score()[0]
+
 class UserAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -74,13 +109,10 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user.first_name)
 
-    def get_user_match_score(self, match):
-        # Retorna a quantidade de perguntas que o usuário acertou na partida recebida como argumento
-        UserAnswer.objects.filter(match_answer=match, user=self.user, option__answer=True).distinct("question").count()
-
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):
     # Gera uma quantidade específica de questões aleatórias para uma partida, assim que a partida é criada.
+    # if not instance.questions: # Verificação, para apenas gerar questões para a partida, se ela não possuir questões vinculadas
     questions = Question.objects.filter(level=instance.level)
     questions_pks = list(questions.values_list('pk', flat=True))
     random_pks = random.sample(questions_pks, k=3)
@@ -90,5 +122,7 @@ def match_post_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=UserAnswer)
 def user_answer_post_save(sender, instance, **kwargs):
-    # Verifica se a partida que recebeu a resposta foi finalizada (todos os jogadores já responderam suas perguntas), se estiver finalizada, calcula quem foi o vencedor e a hora de finalização.
-    pass
+    # Caso seja a última resposta salva na partida, salva os dados de finalização (hora e vencedor)
+    match = instance.match_answer
+    if match.is_finished and not match.end_date and not match.winner:
+        Match.objects.filter(pk=match.pk).update(end_date = datetime.now(), winner = match.get_winner()[0])
