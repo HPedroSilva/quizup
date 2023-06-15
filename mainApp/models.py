@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 import random
-from datetime import datetime
+from django.utils import timezone
 
 LEVEL_CHOICES = (
         ("1", "Fácil"),
@@ -129,4 +129,4 @@ def user_answer_post_save(sender, instance, **kwargs):
     # Caso seja a última resposta salva na partida, salva os dados de finalização (hora e vencedor)
     match = instance.match_answer
     if match.is_ready_to_finish and not match.end_date and not match.winner:
-        Match.objects.filter(pk=match.pk).update(end_date = datetime.now(), winner = match.get_winner()[0])
+        Match.objects.filter(pk=match.pk).update(end_date = timezone.now(), winner = match.get_winner()[0])

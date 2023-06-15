@@ -1,5 +1,5 @@
 {% for match in userMatches %}
-    <a href="{% url 'mainapp:match' pk=match.pk %}">Partida {{ forloop.counter }}</a><br>
+    <a href="{% url 'mainapp:match' pk=match.pk %}">Partida {{ match.pk }}</a><br>
     Criada em: {{ match.start_date }}<br>
     Categorias: {% for category in match.categories.all %}{{ category }}, {% endfor %}<br>
     Participantes: {% for user in match.users.all %}{{ user }}, {% endfor %}
