@@ -116,13 +116,13 @@ class UserProfile(models.Model):
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):
     # Gera uma quantidade específica de questões aleatórias para uma partida, assim que a partida é criada.
-    # if not instance.questions: # Verificação, para apenas gerar questões para a partida, se ela não possuir questões vinculadas
-    questions = Question.objects.filter(level=instance.level)
-    questions_pks = list(questions.values_list('pk', flat=True))
-    random_pks = random.sample(questions_pks, k=3)
-    questions = questions.filter(pk__in=random_pks)
-    instance.questions.set(questions)
-    Match.objects.filter(pk=instance.pk).update()
+    if instance.questions.count() == 0:
+        questions = Question.objects.filter(level=instance.level)
+        questions_pks = list(questions.values_list('pk', flat=True))
+        random_pks = random.sample(questions_pks, k=3)
+        questions = questions.filter(pk__in=random_pks)
+        instance.questions.set(questions)
+        Match.objects.filter(pk=instance.pk).update()
 
 @receiver(post_save, sender=UserAnswer)
 def user_answer_post_save(sender, instance, **kwargs):
