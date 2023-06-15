@@ -53,7 +53,7 @@ class Match(models.Model):
     class Meta:
         verbose_name_plural = "matches"
     
-    def get_url(self):
+    def get_play_url(self):
         return f"{reverse_lazy('mainapp:answer_question')}?match={self.pk}"
     
     @property
@@ -70,13 +70,17 @@ class Match(models.Model):
         return UserAnswer.objects.filter(match_answer=self, user=user).distinct("question").count()
     
     @property
-    def is_finished(self):
-        # Verifica se a partida foi finalizada (todos os jogadores já responderam suas perguntas)
+    def is_ready_to_finish(self):
+        # Verifica se a partida pode ser finalizada (todos os jogadores já responderam suas perguntas)
         for user in self.users.all():
             if self.get_user_questions_answered(user) < self.n_questions:
                 return False
-        return True 
+        return True
     
+    @property
+    def is_finished(self):
+        return (self.end_date is not None) and (self.winner is not None)
+
     def get_score(self):
         # Retorna a pontuação de cada usuário na partida
         score = []
@@ -124,5 +128,5 @@ def match_post_save(sender, instance, **kwargs):
 def user_answer_post_save(sender, instance, **kwargs):
     # Caso seja a última resposta salva na partida, salva os dados de finalização (hora e vencedor)
     match = instance.match_answer
-    if match.is_finished and not match.end_date and not match.winner:
+    if match.is_ready_to_finish and not match.end_date and not match.winner:
         Match.objects.filter(pk=match.pk).update(end_date = datetime.now(), winner = match.get_winner()[0])

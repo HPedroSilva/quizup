@@ -9,6 +9,7 @@ import json
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from mainApp.models import Option, Question, Match, UserAnswer
 
 class AnswerQuestionView(LoginRequiredMixin, TemplateView):
@@ -61,6 +62,10 @@ class CreateMatchView(LoginRequiredMixin, CreateView):
     fields = ["start_date", "users", "level", "categories"]
     template_name = "createMatchForm.html"
     success_url = reverse_lazy("admin:index")
+
+class MatchView(LoginRequiredMixin, DetailView):
+    model = Match
+    template_name = "match.html"
 
 class UserMatchesView(LoginRequiredMixin, ListView):
     model = Match

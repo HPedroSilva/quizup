@@ -1,0 +1,15 @@
+Criada em: {{ match.start_date }}<br>
+Categorias: {% for category in match.categories.all %}{{ category }}, {% endfor %}<br>
+Participantes: {% for user in match.users.all %}{{ user }}, {% endfor %}<br>
+{% if not match.is_finished %}
+    <a href="{{ match.get_play_url }}">Jogar {{ forloop.counter }}</a><br>
+{% else %}
+    Partida finalizada em: {{ match.end_date }}<br>
+    Vencedor: {{ match.winner }}<br><br>
+    Ranking<br>
+    {% for user, score in match.get_score %}
+        {{ forloop.counter }} - {{ user }}: {{ score }} acertos<br>
+    {% endfor %}
+{% endif %}
+<br>
+<br>
