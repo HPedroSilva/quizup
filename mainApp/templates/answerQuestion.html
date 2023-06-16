@@ -1,39 +1,51 @@
 {% extends 'base.html' %}
 {% block js %}
     <script>
-        function answer(option_pk) {
-            fetch("{% url 'mainapp:answer_question' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({
-                    "match": {{ match.pk }},
-                    "question": {{ question.pk }},
-                    "option": option_pk
+        {% if question %}
+            function disableButtons() {
+                buttons = document.getElementsByClassName("btn-option");
+                for(i=0; i<buttons.length; i++) {
+                    buttons[i].disabled = true;
+                }
+            }
+
+            function answer(option_pk) {
+                fetch("{% url 'mainapp:answer_question' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        "match": {{ match.pk }},
+                        "question": {{ question.pk }},
+                        "option": option_pk
+                    })
                 })
-            })
-            .then(response => response)
-            .then(result => {console.log(result.headers.get("judgment"));})
-            .catch(error => {console.error(error);});
-              
-            // Function to retrieve the CSRF token from cookies
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
+                .then(response => response)
+                .then(result => {
+                    console.log(result.headers.get("judgment"));
+                    disableButtons();
+                })
+                .catch(error => {console.error(error);});
+                
+                // Function to retrieve the CSRF token from cookies
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
                         }
                     }
+                    return cookieValue;
                 }
-                return cookieValue;
             }
-        }
+        {% endif %} 
     </script>
 {% endblock js %}
 {% block content %}
@@ -41,7 +53,7 @@
         {{ question }}
         {% for option in question.option_set.all %}
             <br>
-            <button onclick="answer({{ option.pk }})">{{ option }}</button>
+            <button onclick="answer({{ option.pk }})" class="btn-option">{{ option }}</button>
         {% endfor %}    
         <a href="{{ request.get_full_path }}">Próxima</a>
     {% else %}

@@ -36,7 +36,6 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         # Julgar a resposta do usuário para a questão que ele recebeu
         # Falta adicionar verificações nos dados, pois serão recebidos do lado do usuário
-        # Verificar também se a questão já foi respondida por esse usuário na partida 
         data = json.loads(request.body)
         match_pk = data.get("match")
         match = get_object_or_404(Match, pk=match_pk)
@@ -45,11 +44,14 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         option_pk = data.get("option")
         option = get_object_or_404(Option, pk=option_pk)
         
-        user_answer = UserAnswer(user=request.user, question=question, option=option, match_answer=match)
-        user_answer.save()
+        if not UserAnswer.objects.filter(user=request.user, question=question, match_answer=match).exists():
+            user_answer = UserAnswer(user=request.user, question=question, option=option, match_answer=match)
+            user_answer.save()
 
-        judgment = "right" if user_answer.judgment else "wrong"
-        return HttpResponse(headers={"judgment": judgment}, status=200)
+            judgment = "right" if user_answer.judgment else "wrong"
+            return HttpResponse(headers={"judgment": judgment}, status=200)
+        
+        return HttpResponse(status=403)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,7 +61,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
 
 class CreateMatchView(LoginRequiredMixin, CreateView):
     model = Match
-    fields = ["start_date", "users", "level", "categories"]
+    fields = ["users", "level", "categories"]
     template_name = "createMatchForm.html"
     success_url = reverse_lazy("admin:index")
 
