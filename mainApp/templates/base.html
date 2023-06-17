@@ -8,10 +8,45 @@
         <meta name="description" content="">
         <meta name="author" content="Pedro Henrique">
         <title>QuizUp</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        {% block css %}
+            <style>
+                body {
+                    background-color: #E92F48;
+                }
+                .sidebar {
+                    flex-direction: column;
+                    align-items: end;
+                    width: 20%;
+                    height: 100%;
+                }
+            </style>
+        {% endblock css %}
         {% block js %}{% endblock js %}
     </head>
 
     <body>
-        {% block content %}{% endblock content %}
+        {% block navbar %}
+            <nav class="navbar sidebar bg-light">
+                <h1 class="navbar-brand">QuizUp</h1>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link 1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link 2</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link 3</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endblock navbar %}
+        <div class="container">
+            {% block content %}
+                <p>teste</p>
+            {% endblock content %}
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     </body>
 </html>

@@ -77,3 +77,6 @@ class UserMatchesView(LoginRequiredMixin, ListView):
         userMatches = self.get_queryset().filter(users=self.request.user)
         context["userMatches"] = userMatches
         return context
+    
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = "home.html"
