@@ -25,7 +25,6 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         match = get_object_or_404(Match, pk=match_pk)
         if request.user in match.users.all():
             self.match = match
-            # Ainda está tendo problema com esse filtro, apareceu para uma partida uma questão que não era da partida
             answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match)
             self.question = match.questions.exclude(pk__in = answered_questions).first()
             return super(AnswerQuestionView, self).get(request, *args, **kwargs)
@@ -35,7 +34,6 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     
     def post(self, request, *args, **kwargs):
         # Julgar a resposta do usuário para a questão que ele recebeu
-        # Falta adicionar verificações nos dados, pois serão recebidos do lado do usuário
         data = json.loads(request.body)
         match_pk = data.get("match")
         match = get_object_or_404(Match, pk=match_pk)
@@ -44,7 +42,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         option_pk = data.get("option")
         option = get_object_or_404(Option, pk=option_pk)
         
-        if not UserAnswer.objects.filter(user=request.user, question=question, match_answer=match).exists():
+        if not UserAnswer.objects.filter(user=request.user, question=question, match_answer=match).exists() and request.user in match.users.all() and question in match.questions.all() and option in question.option_set.all(): # Verificações de segurança, para evitar fraudes (o usuário está na partida, a questão é da partida, a opção é da questão, essa questão não foi respondida por esse usuário na partida)
             user_answer = UserAnswer(user=request.user, question=question, option=option, match_answer=match)
             user_answer.save()
 

@@ -91,7 +91,6 @@ class Match(models.Model):
     
     def get_winner(self):
         # Retorna o vencedor da partida, e sua pontuação
-        # Falta tratar o caso de acertarem a mesma quantidade (usar tempo?)
         return self.get_score()[0]
 
 class UserAnswer(models.Model):
