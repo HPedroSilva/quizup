@@ -25,12 +25,13 @@
             padding: 5vh 0 0 0;
             align-items: flex-end;
         }
-        .board-content {
+        #board-content {
             height: 90vh;
             background-color: white;
             position: relative;
             top: 5vh;
             border-radius: 10px;
+            padding: 7vh 10vw;
         }
         .box-board-content {
             padding-right: 5vh;
@@ -38,6 +39,46 @@
         .nav-item {
             color: white;
             font-size: 1.3vw;
+        }
+        .card-match {
+            width: 33.3% !important;
+            padding: 0;
+            border-radius: 10px;
+            color: #424242;
+        }
+        .box-title {
+            font-size: 1.5em;
+            margin-top: 2%;
+            color: #424242;
+        }
+        .matches {
+            justify-content: center;
+        }
+        .btn-search {
+            border-radius: 10px;
+            background-color: #F2F2F2;
+            color: #7E8389;
+        }
+        .btn-search-active {
+            background-color: #E92F48;
+            color: white;
+        }
+        .btn-search:hover {
+            background-color: #F2F2F2;
+            border: solid 1px #E92F48;
+            color: #7E8389;
+        }
+        .match-details {
+            font-size: 1rem;
+            padding: 0.5vh 1vw;
+            margin: 0;
+        }
+        .img-match {
+            border-radius: 10px 10px 0 0; 
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
 {% endblock css %}
@@ -63,8 +104,40 @@
 {% endblock navbar %}    
 {% block content %}
     <div class="col-md-10 box-board-content">
-        <div class="board-content">
-            teste
+        <div id="board-content">
+            <div class="row">
+                <form action="">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Procurar partidas">
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <h1 class="box-title">Últimas Partidas</h1>
+                <div class="my-2">
+                    <button class="btn btn-search btn-search-active">Em andamento</button>
+                    <button class="btn btn-search">Finalizadas</button>
+                    <button class="btn btn-search">Minhas Vitórias</button>
+                    <button class="btn btn-search">Meus Pódios</button>
+                </div>
+            </div>
+            <div class="row matches">
+                {% for match in userMatches %}
+                    <div class="card card-match m-1">
+                        <img class="w-100 img-match" src="{% static 'mainApp/img/trivia.webp' %}" alt="Trivia img" style="width:200px">
+                        <div class="row match-details">
+                            <div class="col-md-8">
+                                <a href="{% url 'mainapp:match' pk=match.pk %}"><h5 class="card-title">Partida {{ match.pk }}</h5></a>
+                                {% for category in match.categories.all %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                {% for user in match.users.all %}{{ user.first_name.0 }} {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock content %}
