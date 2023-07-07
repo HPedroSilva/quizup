@@ -1,15 +1,53 @@
-Criada em: {{ match.start_date }}<br>
-Categorias: {% for category in match.categories.all %}{{ category }}, {% endfor %}<br>
-Participantes: {% for user in match.users.all %}{{ user }}, {% endfor %}<br>
-{% if not match.is_finished %}
-    <a href="{{ match.get_play_url }}">Jogar {{ forloop.counter }}</a><br>
-{% else %}
-    Partida finalizada em: {{ match.end_date }}<br>
-    Vencedor: {{ match.winner }}<br><br>
-    Ranking<br>
-    {% for user, score in match.get_score %}
-        {{ forloop.counter }} - {{ user }}: {{ score }} acertos<br>
-    {% endfor %}
-{% endif %}
-<br>
-<br>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block statics %}
+    {{ block.super }}
+    <style>
+        .info-box {
+            background-color: rgba(116, 28, 40, 0.6);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+        }
+        .match-name {
+            color: white;
+            font-size: 1.5em;
+            text-align: center;
+        }
+    </style>
+{% endblock statics %}
+
+{% block content %}
+    <div class="row justify-content-evenly">
+        <div class="col-md-4">
+            <h2 class="match-name">Partida {{ match.id }}</h2>
+            <div class="info-box card">
+                <div class="card-body">
+                    Data de criação: {{ match.start_date }}<br>
+                    Categorias: {% for category in match.categories.all %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}<br>
+                    {% if match.is_finished %}Partida finalizada em: {{ match.end_date }}<br>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-box card">
+                <div class="card-body">
+                    Vencedor: {{ match.winner }}<br>
+                    {% for user, score in match.get_score %}
+                        {{ forloop.counter }} - {{ user }}: {{ score }} acertos<br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        {% comment %} {% if not  %} Verificar se o usuário já responde essa partida {% endcomment %}
+            <a class="btn" href="{{ match.get_play_url }}">Jogar Partida</a><br>
+        {% else %}
+            <a class="btn" href="">Menu Principal</a><br>
+        {% endif %}
+    </div>
+{% endblock content %}
+   
