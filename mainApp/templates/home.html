@@ -2,24 +2,9 @@
 
 {% load static %}
 
-{% block css %}
+{% block statics %}
+    {{ block.super }}
     <style>
-        body {
-            background-color: #E92F48;
-        }
-        @font-face {
-            font-family: alumniSans;
-            src: url({% static 'mainApp/fonts/AlumniSans-Bold.ttf' %});
-            }
-        .quizup {
-            color: white;
-            font-size: 4.5vw;
-            font-family: alumniSans;
-            align-self: center;
-        }
-        .quizup span {
-            color: #6e1824;
-        }
         .navb {
             height: 100vh;
             padding: 5vh 0 0 0;
@@ -41,7 +26,7 @@
             font-size: 1.3vw;
         }
         .card-match {
-            width: 33.3% !important;
+            width: 31.5% !important;
             padding: 0;
             border-radius: 10px;
             color: #424242;
@@ -76,67 +61,63 @@
         .img-match {
             border-radius: 10px 10px 0 0; 
         }
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
     </style>
-{% endblock css %}
-{% block js %}{% endblock js %}
-
-{% block navbar %}
-    <div class="col-md-2">
-        <nav class="nav navb flex-column">
-            <h1 class="quizup">Quiz<span>Up</span></h1>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link 1</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link 2</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link 3</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-{% endblock navbar %}    
+{% endblock statics %}
 {% block content %}
-    <div class="col-md-10 box-board-content">
-        <div id="board-content">
-            <div class="row">
-                <form action="">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Procurar partidas">
-                    </div>
-                </form>
-            </div>
-            <div class="row">
-                <h1 class="box-title">Últimas Partidas</h1>
-                <div class="my-2">
-                    <button class="btn btn-search btn-search-active">Em andamento</button>
-                    <button class="btn btn-search">Finalizadas</button>
-                    <button class="btn btn-search">Minhas Vitórias</button>
-                    <button class="btn btn-search">Meus Pódios</button>
+    <div class="row">
+        <div class="col-md-2">
+            {% block navbar %}
+                <nav class="nav navb flex-column">
+                    <h1 class="quizup">Quiz<span>Up</span></h1>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Home <i class="bi bi-house-door"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Ranking <i class="bi bi-trophy"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Perfil <i class="bi bi-person"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            {% endblock navbar %}    
+        </div>
+        <div class="col-md-10 box-board-content">
+            <div id="board-content">
+                <div class="row">
+                    <form action="">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Procurar partidas">
+                        </div>
+                    </form>
                 </div>
-            </div>
-            <div class="row matches">
-                {% for match in userMatches %}
-                    <div class="card card-match m-1">
-                        <img class="w-100 img-match" src="{% static 'mainApp/img/trivia.webp' %}" alt="Trivia img" style="width:200px">
-                        <div class="row match-details">
-                            <div class="col-md-8">
-                                <a href="{% url 'mainapp:match' pk=match.pk %}"><h5 class="card-title">Partida {{ match.pk }}</h5></a>
-                                {% for category in match.categories.all %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                            </div>
-                            <div class="col-md-4">
-                                {% for user in match.users.all %}{{ user.first_name.0 }} {% endfor %}
+                <div class="row">
+                    <h1 class="box-title">Últimas Partidas</h1>
+                    <div class="my-2">
+                        <button class="btn btn-search btn-search-active">Em andamento</button>
+                        <button class="btn btn-search">Finalizadas</button>
+                        <button class="btn btn-search">Minhas Vitórias</button>
+                        <button class="btn btn-search">Meus Pódios</button>
+                    </div>
+                </div>
+                <div class="row matches">
+                    {% for match in userMatches %}
+                        <div class="card card-match m-1">
+                            <img class="w-100 img-match" src="{% static 'mainApp/img/trivia.webp' %}" alt="Trivia img" style="width:200px">
+                            <div class="row match-details">
+                                <div class="col-md-8">
+                                    <a href="{% url 'mainapp:match' pk=match.pk %}"><h5 class="card-title">Partida {{ match.pk }}</h5></a>
+                                    {% for category in match.categories.all %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                </div>
+                                <div class="col-md-4">
+                                    {% for user in match.users.all %}{{ user.first_name.0 }} {% endfor %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
