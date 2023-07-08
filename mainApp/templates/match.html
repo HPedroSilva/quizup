@@ -7,10 +7,29 @@
     <style>
         .info-box {
             background-color: rgba(116, 28, 40, 0.6);
-            border-radius: 10px;
             color: white;
             font-size: 0.9em;
             height: 38vh;
+        }
+        .card-body {
+            overflow: auto;
+        }
+        .info-box > ::-webkit-scrollbar {
+            width: 10px;
+            border-radius 30px;
+        }
+        
+        .info-box > ::-webkit-scrollbar-track {
+            background: rgba(116, 28, 40, 0.6);
+            border-radius 30px;
+        }
+        
+        .info-box > ::-webkit-scrollbar-thumb {
+            background: rgba(116, 28, 40, 0.8); 
+        }
+        
+        .info-box > ::-webkit-scrollbar-thumb:hover {
+            background: #202020; 
         }
         .match-name {
             color: white;
@@ -33,6 +52,31 @@
         #row-button {
             height: 30vh;
         }
+        .player-box {
+            border-bottom: solid white 1px;
+            padding: 1vh 0 1vh 0;
+        }
+        .player-img{
+            padding: 0;
+            font-size: 2em;
+            text-align: center;
+        }
+        .player-img div{
+            border-radius: 50%;
+            width: 1.5em;
+            height: 1.5em;
+            background-color: rgba(116, 28, 40, 0.8);
+        }
+        .player-score {
+            background-color: white;
+            border-radius: 10px;
+            color: black;
+            text-align: center;
+        }
+        #box-ranking {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
     </style>
 {% endblock statics %}
 
@@ -51,13 +95,15 @@
         <div class="col-md-4">
             <h2 class="match-name">Ranking</h2>
             <div class="info-box card">
-                <div class="card-body">
-                    <div class="card">
-
-                    </div>
-                    {% comment %} {% for user, score in match.get_score %}
-                        {{ forloop.counter }} - {% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}: {{ score }} acertos<br>
-                    {% endfor %} {% endcomment %}
+                <div class="card-body" id="box-ranking">
+                    {% for user, score in match.get_score %}
+                        <div class="row player-box align-items-center">
+                            <div class="col-md-2">{{ forloop.counter }}°</div>
+                            <div class="col-md-2 player-img"><div><i class="bi bi-person-fill"></i></div></div>
+                            <div class="col-md-6 player-name">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}</div>
+                            <div class="col-md-2 player-score">{{ score }}</div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
