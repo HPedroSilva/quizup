@@ -69,6 +69,10 @@ class Match(models.Model):
         # Retorna a quantidade de perguntas que o usuário respondeu na partida
         return UserAnswer.objects.filter(match_answer=self, user=user).distinct("question").count()
     
+    def user_questions_to_answer(self, user):
+        # Retorna as questões que o usuário ainda tem a responder na partida
+        return self.questions.exclude(useranswer__user = user, useranswer__match_answer = self) if user in self.users.all() else None
+
     @property
     def is_ready_to_finish(self):
         # Verifica se a partida pode ser finalizada (todos os jogadores já responderam suas perguntas)

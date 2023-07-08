@@ -66,6 +66,18 @@ class CreateMatchView(LoginRequiredMixin, CreateView):
 class MatchView(LoginRequiredMixin, DetailView):
     model = Match
     template_name = "match.html"
+    
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        return super(MatchView, self).get(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        self.object = self.get_object()
+        userQuestionsToAnswer = self.object.user_questions_to_answer(self.request.user)
+        context["userQuestionsToAnswer"] = userQuestionsToAnswer
+        return context
 
 class UserMatchesView(LoginRequiredMixin, ListView):
     model = Match

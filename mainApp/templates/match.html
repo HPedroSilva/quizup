@@ -10,17 +10,34 @@
             border-radius: 10px;
             color: white;
             font-size: 0.9em;
+            height: 38vh;
         }
         .match-name {
             color: white;
             font-size: 1.5em;
             text-align: center;
         }
+        .btn-next {
+            background-color: white;
+            color: #424242;
+            width: 100%;
+        }
+        .btn-next:hover {
+            background-color: #f2f2f2;
+            color: black;
+        }
+        #row-info-box {
+            margin-top: 25vh;
+            height: 45vh;
+        }
+        #row-button {
+            height: 30vh;
+        }
     </style>
 {% endblock statics %}
 
 {% block content %}
-    <div class="row justify-content-evenly">
+    <div class="row justify-content-evenly align-items-end" id="row-info-box">
         <div class="col-md-4">
             <h2 class="match-name">Partida {{ match.id }}</h2>
             <div class="info-box card">
@@ -32,22 +49,27 @@
             </div>
         </div>
         <div class="col-md-4">
+            <h2 class="match-name">Ranking</h2>
             <div class="info-box card">
                 <div class="card-body">
-                    Vencedor: {{ match.winner }}<br>
-                    {% for user, score in match.get_score %}
-                        {{ forloop.counter }} - {{ user }}: {{ score }} acertos<br>
-                    {% endfor %}
+                    <div class="card">
+
+                    </div>
+                    {% comment %} {% for user, score in match.get_score %}
+                        {{ forloop.counter }} - {% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}: {{ score }} acertos<br>
+                    {% endfor %} {% endcomment %}
                 </div>
             </div>
         </div>
     </div>
-    <div class="row justify-content-center">
-        {% comment %} {% if not  %} Verificar se o usuário já responde essa partida {% endcomment %}
-            <a class="btn" href="{{ match.get_play_url }}">Jogar Partida</a><br>
-        {% else %}
-            <a class="btn" href="">Menu Principal</a><br>
-        {% endif %}
+    <div class="row justify-content-center align-items-center" id="row-button">
+        <div class="col-md-3">
+            {% if userQuestionsToAnswer %}
+                <a class="btn btn-next" href="{{ match.get_play_url }}">Jogar Partida</a><br>
+            {% else %}
+                <a class="btn btn-next" href="{% url 'mainapp:home' %}">Menu Principal</a><br>
+            {% endif %}
+        </div>
     </div>
 {% endblock content %}
    
