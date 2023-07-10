@@ -33,6 +33,17 @@
                     text-decoration: none;
                     color: inherit;
                 }
+                #board-content {
+                    height: 90vh;
+                    background-color: white;
+                    position: relative;
+                    top: 5vh;
+                    border-radius: 10px;
+                    padding: 7vh 10vw;
+                }
+                #box-board {
+                    padding-right: 5vh;
+                }
             </style>
         {% endblock statics %}
     </head>
@@ -40,6 +51,13 @@
     <body>
         <div class="container-fluid">
             {% block content %}
+                {# Bloco principal de conteúdo. Colocar dentro de uma row #}
+                <div class="col-md-10" id="box-board">
+                    <div id="board-content">
+                        {% block box_board %}
+                        {% endblock box_board %}
+                    </div>
+                </div>
             {% endblock content %}
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
