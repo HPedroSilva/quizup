@@ -1,9 +1,36 @@
 {% extends 'base.html' %}
-{% block js %}
+{% block statics %}
+    {{ block.super }}
+    <style>
+        .question-indicator {
+            text-align: center;
+        }
+        #timer {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: 600;
+            margin: 2vh 0 2vh 0;
+        }
+        #question {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 2vh 0 2vh 0;
+        }
+        .option {
+            text-align: center;
+            font-size: 1.3em;
+            border-radius: 10px;
+            background-color: #F2F2F2;
+            margin: 1vh 0 1vh 0;
+            padding: 2.5vh 0 2.5vh 0;
+            border: none;
+            width: 100%;
+        }
+    </style>
     <script>
         {% if question %}
             function disableButtons() {
-                buttons = document.getElementsByClassName("btn-option");
+                buttons = document.getElementsByClassName("option");
                 for(i=0; i<buttons.length; i++) {
                     buttons[i].disabled = true;
                 }
@@ -47,16 +74,28 @@
             }
         {% endif %} 
     </script>
-{% endblock js %}
-{% block content %}
+{% endblock statics %}
+
+{% block box_board %}
     {% if question %}
-        {{ question }}
-        {% for option in question.option_set.all %}
-            <br>
-            <button onclick="answer({{ option.pk }})" class="btn-option">{{ option }}</button>
-        {% endfor %}    
-        <a href="{{ request.get_full_path }}">Próxima</a>
+        <div id="head">
+            <div class="row justify-content-end"><div class="col-md-2"><div class="question-indicator"><i class="bi bi-star-fill"></i> 3/10</div></div></div>
+            <div class="row justify-content-center"><div class="col-md-2"><div id="timer">5</div></div></div>
+            <div class="row justify-content-center"><div class="col-md-12"><div id="question">{{ question }}</div></div></div>
+        </div>
+        <div id="options">
+            {% for option in question.option_set.all %}
+            <div class="row"><div class="col-md-12"><button onclick="answer({{ option.pk }})" class="option">{{ option }}</button></div></div>
+            {% endfor %}
+        </div>
+        {% comment %} <a href="{{ request.get_full_path }}">Próxima</a> {% endcomment %}
     {% else %}
         <p>Você já respondeu todas as perguntas da partida</p>
     {% endif %}
+{% endblock box_board %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        {{ block.super }} {# box_board é inserido aqui #}
+    </div>
 {% endblock content %}
