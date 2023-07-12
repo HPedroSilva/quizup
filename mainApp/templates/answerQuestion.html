@@ -26,6 +26,14 @@
             border: none;
             width: 100%;
         }
+        .option-right {
+            background-color: #1EE76E;
+            color: white;
+        }
+        .option-wrong {
+            background-color: #741C28;
+            color: white;
+        }
     </style>
     <script>
         {% if question %}
@@ -33,6 +41,15 @@
                 buttons = document.getElementsByClassName("option");
                 for(i=0; i<buttons.length; i++) {
                     buttons[i].disabled = true;
+                }
+            }
+
+            function manageButtons(judgment, option_pk) {
+                disableButtons();
+                if(judgment == "right") {
+                    document.getElementById("option-" + option_pk).classList.add("option-right");
+                } else if(judgment == "wrong") {
+                    document.getElementById("option-" + option_pk).classList.add("option-wrong");
                 }
             }
 
@@ -51,8 +68,7 @@
                 })
                 .then(response => response)
                 .then(result => {
-                    console.log(result.headers.get("judgment"));
-                    disableButtons();
+                    manageButtons(result.headers.get("judgment"), option_pk);
                 })
                 .catch(error => {console.error(error);});
                 
@@ -85,10 +101,10 @@
         </div>
         <div id="options">
             {% for option in question.option_set.all %}
-            <div class="row"><div class="col-md-12"><button onclick="answer({{ option.pk }})" class="option">{{ option }}</button></div></div>
+                <div class="row"><div class="col-md-12"><button onclick="answer({{ option.pk }})" class="option" id="option-{{ option.pk }}">{{ option }}</button></div></div>
             {% endfor %}
         </div>
-        {% comment %} <a href="{{ request.get_full_path }}">Próxima</a> {% endcomment %}
+        <a href="{{ request.get_full_path }}">Próxima</a>
     {% else %}
         <p>Você já respondeu todas as perguntas da partida</p>
     {% endif %}
