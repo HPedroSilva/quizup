@@ -23,6 +23,8 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         match_pk = request.GET.get("match")
         match = get_object_or_404(Match, pk=match_pk)
+        self.user = request.user
+
         if request.user in match.users.all():
             self.match = match
             answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match)
@@ -55,13 +57,14 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['question'] = self.question
         context['match'] = self.match
+        context['user_questions_answered'] = self.match.get_user_questions_answered(self.user)
         return context
 
 class CreateMatchView(LoginRequiredMixin, CreateView):
     model = Match
     fields = ["users", "level", "categories"]
     template_name = "createMatchForm.html"
-    success_url = reverse_lazy("admin:index")
+    success_url = reverse_lazy("mainapp:home")
 
 class MatchView(LoginRequiredMixin, DetailView):
     model = Match
@@ -95,6 +98,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        userMatches = Match.objects.filter(users=self.request.user)[:6]
+        userMatches = Match.objects.filter(users=self.request.user).order_by("-start_date")[:6]
         context["userMatches"] = userMatches
         return context
