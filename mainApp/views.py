@@ -74,7 +74,6 @@ class MatchView(LoginRequiredMixin, DetailView):
         self.request = request
         return super(MatchView, self).get(request, *args, **kwargs)
 
-
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         self.object = self.get_object()
@@ -96,8 +95,15 @@ class UserMatchesView(LoginRequiredMixin, ListView):
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "home.html"
 
+    def get(self, request, *args, **kwargs):
+        self.userMatches = Match.objects.filter(users=self.request.user)
+        if request.GET.get('search'):
+            pass
+        else:
+            self.userMatches = self.userMatches.order_by("-start_date")[:6]
+        return super(HomeView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        userMatches = Match.objects.filter(users=self.request.user).order_by("-start_date")[:6]
-        context["userMatches"] = userMatches
+        context["userMatches"] = self.userMatches
         return context

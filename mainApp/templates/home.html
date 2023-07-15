@@ -59,20 +59,13 @@
 
 {% block box_board %}
     <div class="row">
-        <form action="">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control" placeholder="Procurar partidas">
-            </div>
-        </form>
-    </div>
-    <div class="row">
         <h1 class="box-title">Últimas Partidas</h1>
         <div class="my-2">
-            <button class="btn btn-search btn-search-active">Em andamento</button>
-            <button class="btn btn-search">Finalizadas</button>
-            <button class="btn btn-search">Minhas Vitórias</button>
-            <button class="btn btn-search">Meus Pódios</button>
+            <button class="btn btn-search btn-search-active" title="Partidas com perguntas a serem respondidas.">Pendentes</button>
+            <button class="btn btn-search" title="Partidas aguardando finalização dos oponentes.">Em andamento</button>
+            <button class="btn btn-search" title="Partidas finalizadas.">Finalizadas</button>
+            <button class="btn btn-search" title="Partidas que venci.">Minhas Vitórias</button>
+            <button class="btn btn-search" title="Partidas em que fiquei entre os 3 primeiros.">Meus Pódios</button>
         </div>
     </div>
     <div class="row matches">
