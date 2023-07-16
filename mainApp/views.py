@@ -96,7 +96,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "home.html"
 
     def get(self, request, *args, **kwargs):
-        self.userMatches = Match.objects.filter(users=self.request.user)
+        self.userMatches = self.request.user.userprofile.pending_matches
         if request.GET.get('search'):
             pass
         else:
