@@ -144,6 +144,37 @@ class UserProfile(models.Model):
                 user_finished_matches_list.append(match.pk)
         user_finished_matches = user_matches.filter(pk__in=user_finished_matches_list)
         return user_finished_matches
+    
+    @property
+    def in_progress_matches(self):
+        '''Retorna um queryset com as partidas aguardando finalização dos oponentes.'''
+        user_matches = self.matches
+        pending_matches = self.pending_matches
+        finished_matches = self.finished_matches
+        in_progress = user_matches.exclude(pk__in=pending_matches).exclude(pk__in=finished_matches)
+        return in_progress
+    
+    def min_position_matches(self, min_position):
+        '''Retorna um queryset com as partidas em que o usuário ficou no mínimo na posição passada como argumento.'''
+        user_matches = self.matches
+        user_position_matches_list = []
+        for match in user_matches:
+            ranking = match.get_score()[:min_position]
+            if self.user in ranking:
+                user_position_matches_list.append(match.pk)
+        user_min_position_matches = user_matches.filter(pk__in=user_position_matches_list)
+        return user_min_position_matches
+    
+    @property
+    def podium_matches(self):
+        '''Retorna um queryset com as partidas em que o usuário ficou no pódio (3 primeiros).'''
+        return self.min_position_matches(3)
+
+    @property
+    def wins(self):
+        '''Retorna um queryset com as partidas que o usuário venceu.'''
+        wins = self.matches.filter(winner=self.user)
+        return wins
 
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):

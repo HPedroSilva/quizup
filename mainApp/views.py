@@ -96,11 +96,13 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "home.html"
 
     def get(self, request, *args, **kwargs):
-        self.userMatches = self.request.user.userprofile.pending_matches
-        if request.GET.get('search'):
-            pass
-        else:
-            self.userMatches = self.userMatches.order_by("-start_date")[:6]
+        allowed_filters = ['wins', 'finished_matches']
+        user = self.request.user.userprofile
+        self.userMatches = user.matches
+        filter = str(request.GET.get('filter', ''))
+        if filter and filter in allowed_filters:
+            self.userMatches = getattr(user, filter, None)
+        self.userMatches = self.userMatches.order_by("-start_date")[:6]
         return super(HomeView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
