@@ -61,11 +61,11 @@
     <div class="row">
         <h1 class="box-title">Últimas Partidas</h1>
         <div class="my-2">
-            <button class="btn btn-search btn-search-active" title="Partidas com perguntas a serem respondidas.">Pendentes</button>
-            <button class="btn btn-search" title="Partidas aguardando finalização dos oponentes.">Em andamento</button>
-            <button class="btn btn-search" title="Partidas finalizadas.">Finalizadas</button>
-            <button class="btn btn-search" title="Partidas que venci.">Minhas Vitórias</button>
-            <button class="btn btn-search" title="Partidas em que fiquei entre os 3 primeiros.">Meus Pódios</button>
+            <a href="{% url 'mainapp:home' %}" class="btn btn-search {% if not request.GET.filter %}btn-search-active{% endif %}" title="Partidas com perguntas a serem respondidas.">Pendentes</a>
+            <a href="{% url 'mainapp:home' %}?filter=in_progress_matches" class="btn btn-search {% if request.GET.filter == 'in_progress_matches' %}btn-search-active{% endif %}" title="Partidas aguardando finalização dos oponentes.">Em andamento</a>
+            <a href="{% url 'mainapp:home' %}?filter=finished_matches" class="btn btn-search {% if request.GET.filter == 'finished_matches' %}btn-search-active{% endif %}" title="Partidas finalizadas.">Finalizadas</a>
+            <a href="{% url 'mainapp:home' %}?filter=wins" class="btn btn-search {% if request.GET.filter == 'wins' %}btn-search-active{% endif %}" title="Partidas que venci.">Minhas Vitórias</a>
+            <a href="{% url 'mainapp:home' %}?filter=podium_matches" class="btn btn-search {% if request.GET.filter == 'podium_matches' %}btn-search-active{% endif %}" title="Partidas em que fiquei entre os 3 primeiros.">Meus Pódios</a>
         </div>
     </div>
     <div class="row matches">

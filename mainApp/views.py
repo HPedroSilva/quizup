@@ -96,7 +96,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "home.html"
 
     def get(self, request, *args, **kwargs):
-        allowed_filters = ['wins', 'finished_matches']
+        allowed_filters = ['in_progress_matches', 'finished_matches', 'wins', 'podium_matches']
         user = self.request.user.userprofile
         self.userMatches = user.matches
         filter = str(request.GET.get('filter', ''))
