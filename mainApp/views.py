@@ -7,10 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 import json
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from mainApp.models import Option, Question, Match, UserAnswer
+from mainApp.models import Category, Option, Question, Match, UserAnswer, LEVEL_CHOICES
 
 class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     """
@@ -77,3 +77,66 @@ class UserMatchesView(LoginRequiredMixin, ListView):
         userMatches = self.get_queryset().filter(users=self.request.user)
         context["userMatches"] = userMatches
         return context
+    
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = "home.html"
+
+    def get(self, request, *args, **kwargs):
+        allowed_filters = ['in_progress_matches', 'finished_matches', 'wins', 'podium_matches']
+        user = self.request.user.userprofile
+        self.userMatches = user.matches
+        filter = str(request.GET.get('filter', ''))
+        if filter and filter in allowed_filters:
+            self.userMatches = getattr(user, filter, None)
+        self.userMatches = self.userMatches.order_by("-start_date")[:6]
+        return super(HomeView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["userMatches"] = self.userMatches
+        return context
+
+from mainApp.forms import ImportQuestionsForm
+from django.conf import settings
+import os
+import json
+class ImportQuestionsView(LoginRequiredMixin, FormView):
+    template_name = "import_questions.html"
+    form_class = ImportQuestionsForm
+    success_url = reverse_lazy("mainapp:user_matches")
+
+    def form_valid(self, form):
+        form_file = form.cleaned_data['file']
+        file_path = os.path.join(settings.CONTENT_ROOT, "file.json")
+        levels = [level[0] for level in LEVEL_CHOICES]
+        
+        with open(file_path, "wb+") as destination:
+            for chunk in form_file.chunks():
+                destination.write(chunk)
+        
+        file = open(file_path, "r")
+        file_data = file.read()
+        questions = json.loads(file_data)
+
+        for question_import in questions:
+            question_text = question_import.get("text", "")
+            question_category = question_import.get("category", "")
+            question_level = question_import.get("level", "")
+            options_import = question_import.get("options")
+
+            if question_category:
+                category = Category.objects.filter(name__icontains=question_category).first()
+            
+            if question_level and question_level in levels and question_text and category:
+                question = Question(text=question_text, category=category, level=question_level)
+                question.save()
+                
+                for option_import in options_import:
+                    option_text = option_import.get("text", "")
+                    option_answer = option_import.get("answer", "")
+                    
+                    if question and option_text and option_answer:
+                        option = Option(question=question, text=option_text, answer=option_answer)
+                        option.save()
+
+        return super(ImportQuestionsView, self).form_valid(form)
