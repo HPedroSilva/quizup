@@ -109,7 +109,7 @@
 {% block box_board %}
     {% if question %}
         <div id="head">
-            <div class="row justify-content-end"><div class="col-md-2"><div class="question-indicator"><i class="bi bi-star-fill"></i> {{ user_questions_answered }}/{{ match.n_questions }}</div></div></div>
+            <div class="row justify-content-end"><div class="col-md-2"><div class="question-indicator" title="Você respondeu {{ user_questions_answered }} de {{ match.n_questions }} questões."><i class="bi bi-star-fill"></i> {{ user_questions_answered }}/{{ match.n_questions }}</div></div></div>
             <div class="row justify-content-center"><div class="col-md-2"><div id="timer">5</div></div></div>
             <div class="row justify-content-center"><div class="col-md-12"><div id="question">{{ question }}</div></div></div>
         </div>

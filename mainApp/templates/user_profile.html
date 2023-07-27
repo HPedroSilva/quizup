@@ -1,0 +1,12 @@
+{% extends 'base_navbar.html' %}
+
+{% block statics %}
+    {{ block.super }}
+{% endblock statics %}
+
+{% block box_board %}
+{% endblock box_board %}
+
+{% block content %}
+    {{ block.super }} {# Importação do conteudo do bloco content do template base, que vem com o bloco box_board vazio, mas posicionado dentro de content #}
+{% endblock content %}

@@ -11,6 +11,7 @@ from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from mainApp.models import Option, Question, Match, UserAnswer
+from django.contrib.auth.models import User
 
 class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     """
@@ -109,3 +110,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context =  super().get_context_data(**kwargs)
         context["userMatches"] = self.userMatches
         return context
+    
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    model = User
+    template_name = "user_profile.html"

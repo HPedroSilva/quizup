@@ -9,4 +9,5 @@ urlpatterns = [
     path("create-match/", views.CreateMatchView.as_view(), name="create_match"),
     path("match/<int:pk>/", views.MatchView.as_view(), name="match"),
     path("user-matches/", views.UserMatchesView.as_view(), name="user_matches"),
+    path("profile/<str:username>", views.UserProfileView.as_view(), name="user_profile"),
 ]
