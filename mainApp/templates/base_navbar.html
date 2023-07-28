@@ -12,7 +12,7 @@
         }
         .nav-item {
             color: white;
-            font-size: 1.3vw;
+            font-size: 1.2em;
         }
     </style>
 {% endblock statics %}
@@ -31,7 +31,7 @@
                             <a class="nav-link" href="#">Ranking <i class="bi bi-trophy"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Perfil <i class="bi bi-person"></i></a>
+                            <a class="nav-link" href="{% url 'mainapp:user_profile' request.user.username %}">Perfil <i class="bi bi-person"></i></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'mainapp:user_matches' %}">Partidas</a>
