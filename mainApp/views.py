@@ -12,6 +12,11 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from mainApp.models import Option, Question, Match, UserAnswer
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import UserPassesTestMixin
+from mainApp.forms import ImportQuestionsForm
+from django.conf import settings
+import os
+import json
 
 class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     """
@@ -111,14 +116,13 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context["userMatches"] = self.userMatches
         return context
 
-from mainApp.forms import ImportQuestionsForm
-from django.conf import settings
-import os
-import json
-class ImportQuestionsView(LoginRequiredMixin, FormView):
+class ImportQuestionsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     template_name = "import_questions.html"
     form_class = ImportQuestionsForm
     success_url = reverse_lazy("mainapp:user_matches")
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
     def form_valid(self, form):
         form_file = form.cleaned_data['file']
