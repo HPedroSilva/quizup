@@ -69,6 +69,10 @@ class Match(models.Model):
         # Retorna a quantidade de perguntas que o usuário respondeu na partida
         return UserAnswer.objects.filter(match_answer=self, user=user).distinct("question").count()
     
+    def user_questions_to_answer(self, user):
+        # Retorna as questões que o usuário ainda tem a responder na partida
+        return self.questions.exclude(useranswer__user = user, useranswer__match_answer = self) if user in self.users.all() else None
+
     @property
     def is_ready_to_finish(self):
         # Verifica se a partida pode ser finalizada (todos os jogadores já responderam suas perguntas)
@@ -111,6 +115,66 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user.first_name)
+    
+    @property
+    def matches(self):
+        '''Retorna um queryset com as partidas que o usuário participa'''
+        user_matches = Match.objects.filter(users=self.user)        
+        return user_matches
+    
+    @property
+    def pending_matches(self):
+        '''Retorna um queryset com as partidas pendentes (que ainda possuem perguntas a serem respondidas) do usuário'''
+        user_matches = self.matches
+        user_pending_matches_list = []
+        for match in user_matches:
+            if match.user_questions_to_answer(self.user).count() > 0:
+                user_pending_matches_list.append(match.pk)
+        user_pending_matches = user_matches.filter(pk__in=user_pending_matches_list)
+        
+        return user_pending_matches
+    
+    @property
+    def finished_matches(self):
+        '''Retorna um queryset com as partidas finalizadas que o usuário participou.'''
+        user_matches = self.matches
+        user_finished_matches_list = []
+        for match in user_matches:
+            if match.is_finished:
+                user_finished_matches_list.append(match.pk)
+        user_finished_matches = user_matches.filter(pk__in=user_finished_matches_list)
+        return user_finished_matches
+    
+    @property
+    def in_progress_matches(self):
+        '''Retorna um queryset com as partidas aguardando finalização dos oponentes.'''
+        user_matches = self.matches
+        pending_matches = self.pending_matches
+        finished_matches = self.finished_matches
+        in_progress = user_matches.exclude(pk__in=pending_matches).exclude(pk__in=finished_matches)
+        return in_progress
+    
+    def min_position_matches(self, min_position):
+        '''Retorna um queryset com as partidas em que o usuário ficou no mínimo na posição passada como argumento.'''
+        user_matches = self.matches
+        user_position_matches_list = []
+        for match in user_matches:
+            ranking = match.get_score()[:min_position]
+            if self.user in ranking:
+                user_position_matches_list.append(match.pk)
+        user_min_position_matches = user_matches.filter(pk__in=user_position_matches_list)
+        return user_min_position_matches
+    
+    @property
+    def podium_matches(self):
+        '''Retorna um queryset com as partidas em que o usuário ficou no pódio (3 primeiros).'''
+        return self.min_position_matches(3)
+
+    @property
+    def wins(self):
+        '''Retorna um queryset com as partidas que o usuário venceu.'''
+        wins = self.matches.filter(winner=self.user)
+        return wins
 
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):

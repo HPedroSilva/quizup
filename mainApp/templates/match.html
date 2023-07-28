@@ -1,15 +1,121 @@
-Criada em: {{ match.start_date }}<br>
-Categorias: {% for category in match.categories.all %}{{ category }}, {% endfor %}<br>
-Participantes: {% for user in match.users.all %}{{ user }}, {% endfor %}<br>
-{% if not match.is_finished %}
-    <a href="{{ match.get_play_url }}">Jogar {{ forloop.counter }}</a><br>
-{% else %}
-    Partida finalizada em: {{ match.end_date }}<br>
-    Vencedor: {{ match.winner }}<br><br>
-    Ranking<br>
-    {% for user, score in match.get_score %}
-        {{ forloop.counter }} - {{ user }}: {{ score }} acertos<br>
-    {% endfor %}
-{% endif %}
-<br>
-<br>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block statics %}
+    {{ block.super }}
+    <style>
+        .info-box {
+            background-color: rgba(116, 28, 40, 0.6);
+            color: white;
+            font-size: 0.9em;
+            height: 38vh;
+        }
+        .card-body {
+            overflow: auto;
+        }
+        .info-box > ::-webkit-scrollbar {
+            width: 10px;
+            border-radius 30px;
+        }
+        
+        .info-box > ::-webkit-scrollbar-track {
+            background: rgba(116, 28, 40, 0.6);
+            border-radius 30px;
+        }
+        
+        .info-box > ::-webkit-scrollbar-thumb {
+            background: rgba(116, 28, 40, 0.8); 
+        }
+        
+        .info-box > ::-webkit-scrollbar-thumb:hover {
+            background: #202020; 
+        }
+        .match-name {
+            color: white;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .btn-next {
+            background-color: white;
+            color: #424242;
+            width: 100%;
+        }
+        .btn-next:hover {
+            background-color: #f2f2f2;
+            color: black;
+        }
+        #row-info-box {
+            margin-top: 25vh;
+            height: 45vh;
+        }
+        #row-button {
+            height: 30vh;
+        }
+        .player-box {
+            border-bottom: solid white 1px;
+            padding: 1vh 0 1vh 0;
+        }
+        .player-img{
+            padding: 0;
+            font-size: 2em;
+            text-align: center;
+        }
+        .player-img div{
+            border-radius: 50%;
+            width: 1.5em;
+            height: 1.5em;
+            background-color: rgba(116, 28, 40, 0.8);
+        }
+        .player-score {
+            background-color: white;
+            border-radius: 10px;
+            color: black;
+            text-align: center;
+        }
+        #box-ranking {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    </style>
+{% endblock statics %}
+
+{% block content %}
+    <div class="row justify-content-evenly align-items-end" id="row-info-box">
+        <div class="col-md-4">
+            <h2 class="match-name">Partida {{ match.id }}</h2>
+            <div class="info-box card">
+                <div class="card-body">
+                    Data de criação: {{ match.start_date }}<br>
+                    Categorias: {% for category in match.categories.all %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}<br>
+                    {% if match.is_finished %}Partida finalizada em: {{ match.end_date }}<br>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h2 class="match-name">Ranking</h2>
+            <div class="info-box card">
+                <div class="card-body" id="box-ranking">
+                    {% for user, score in match.get_score %}
+                        <div class="row player-box align-items-center">
+                            <div class="col-md-2">{{ forloop.counter }}°</div>
+                            <div class="col-md-2 player-img"><div><i class="bi bi-person-fill"></i></div></div>
+                            <div class="col-md-6 player-name">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}</div>
+                            <div class="col-md-2 player-score">{{ score }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center align-items-center" id="row-button">
+        <div class="col-md-3">
+            {% if userQuestionsToAnswer %}
+                <a class="btn btn-next" href="{{ match.get_play_url }}">Jogar Partida</a><br>
+            {% else %}
+                <a class="btn btn-next" href="{% url 'mainapp:home' %}">Menu Principal</a><br>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
+   

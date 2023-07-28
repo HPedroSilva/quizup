@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="10mm"
+   height="10mm"
+   viewBox="0 0 10 10"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09, custom)"
+   sodipodi:docname="Logo-QuizUp"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="313.95541"
+     inkscape:cy="431.51191"
+     inkscape:window-width="1600"
+     inkscape:window-height="836"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-122.57038,-133.7008)">
+    <g
+       id="g2255">
+      <rect
+         style="fill:#e92f48;fill-opacity:1;stroke-width:0.171164;paint-order:stroke fill markers"
+         id="rect5549-6-0"
+         width="10"
+         height="10"
+         x="122.57037"
+         y="133.70081"
+         ry="0.77346539"
+         inkscape:export-filename="rect5549-6.svg"
+         inkscape:export-xdpi="39.717785"
+         inkscape:export-ydpi="39.717785" />
+      <g
+         aria-label="Q"
+         id="text8330-6-4-5-3"
+         style="font-size:10.5833px;line-height:1.25;fill:#ffffff;stroke-width:0.264583"
+         transform="translate(55.482027,19.62616)">
+        <path
+           d="m 73.019666,122.90574 -0.698497,-1.22767 q -0.0635,0.0106 -0.127,0.0106 -0.0635,0 -0.137583,0 -0.507998,0 -0.910164,-0.11642 -0.391582,-0.127 -0.613831,-0.508 -0.222249,-0.39158 -0.222249,-1.15358 v -3.24907 q 0,-0.56092 0.222249,-0.86783 0.232833,-0.30692 0.645581,-0.42333 0.412749,-0.127 0.941914,-0.127 0.539748,0 0.93133,0.127 0.391582,0.127 0.603248,0.43391 0.211666,0.30692 0.211666,0.85725 v 3.23849 q 0,0.64558 -0.158749,1.00541 -0.148166,0.34925 -0.433915,0.52917 l 0.560914,0.98424 z m -0.910163,-1.93675 q 0.158749,0 0.275165,-0.0423 0.127,-0.0423 0.1905,-0.17992 0.0635,-0.13758 0.0635,-0.381 v -3.75707 q 0,-0.254 -0.0635,-0.381 -0.0635,-0.13758 -0.1905,-0.17991 -0.116416,-0.0423 -0.275165,-0.0423 -0.148167,0 -0.275166,0.0423 -0.116417,0.0423 -0.1905,0.17991 -0.0635,0.127 -0.0635,0.381 v 3.75707 q 0,0.24342 0.0635,0.381 0.07408,0.13759 0.1905,0.17992 0.126999,0.0423 0.275166,0.0423 z"
+           style="font-family:'Alumni Sans';-inkscape-font-specification:'Alumni Sans';fill:#ffffff"
+           id="path1820" />
+      </g>
+    </g>
+  </g>
+</svg>

@@ -10,7 +10,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from mainApp.models import Category, Option, Question, Match, UserAnswer, LEVEL_CHOICES
+from mainApp.models import Option, Question, Match, UserAnswer
+from django.contrib.auth.models import User
 
 class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     """
@@ -23,6 +24,8 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         match_pk = request.GET.get("match")
         match = get_object_or_404(Match, pk=match_pk)
+        self.user = request.user
+
         if request.user in match.users.all():
             self.match = match
             answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match)
@@ -55,17 +58,29 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['question'] = self.question
         context['match'] = self.match
+        context['user_questions_answered'] = self.match.get_user_questions_answered(self.user)
         return context
 
 class CreateMatchView(LoginRequiredMixin, CreateView):
     model = Match
     fields = ["users", "level", "categories"]
     template_name = "createMatchForm.html"
-    success_url = reverse_lazy("admin:index")
+    success_url = reverse_lazy("mainapp:home")
 
 class MatchView(LoginRequiredMixin, DetailView):
     model = Match
     template_name = "match.html"
+    
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        return super(MatchView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        self.object = self.get_object()
+        userQuestionsToAnswer = self.object.user_questions_to_answer(self.request.user)
+        context["userQuestionsToAnswer"] = userQuestionsToAnswer
+        return context
 
 class UserMatchesView(LoginRequiredMixin, ListView):
     model = Match
@@ -140,3 +155,7 @@ class ImportQuestionsView(LoginRequiredMixin, FormView):
                         option.save()
 
         return super(ImportQuestionsView, self).form_valid(form)
+    
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    model = User
+    template_name = "user_profile.html"

@@ -1,0 +1,110 @@
+{% extends 'base_navbar.html' %}
+
+{% load static %}
+
+{% block statics %}
+    {{ block.super }}
+    <style>
+        .info-box {
+            background-color: #E92F48;
+            color: white;
+            font-size: 0.9em;
+            height: 38vh;
+        }
+        .card-body {
+            overflow: auto;
+        }
+        .info-box > ::-webkit-scrollbar {
+            width: 10px;
+            border-radius 30px;
+        }
+        
+        .info-box > ::-webkit-scrollbar-track {
+            background: rgba(116, 28, 40, 0.6);
+            border-radius 30px;
+        }
+        
+        .info-box > ::-webkit-scrollbar-thumb {
+            background: rgba(116, 28, 40, 0.8); 
+        }
+        
+        .info-box > ::-webkit-scrollbar-thumb:hover {
+            background: #202020; 
+        }
+        .match-name {
+            color: white;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        #users-box {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .player-box {
+            border-bottom: solid white 1px;
+            padding: 1vh 0 1vh 0;
+        }
+        .player-img{
+            padding: 0;
+            font-size: 2em;
+            text-align: center;
+        }
+        .player-img div{
+            border-radius: 50%;
+            width: 1.5em;
+            height: 1.5em;
+        }
+        .player-name {
+            font-size: 1.5em;
+        }
+        .player-score {
+            background-color: white;
+            border-radius: 10px;
+            color: black;
+            text-align: center;
+        }
+    </style>
+{% endblock statics %}
+
+{% block box_board %}
+    <div class="row row-cols-2">
+        <div class="col">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <img class="img-fluid rounded-circle" src="{% static 'mainApp/img/user-default.jpg' %}" alt="">
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <span>70 XP</span>
+                    <h1>{{ user.first_name }}</h1>
+                    <p>{{ user.username }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="">
+                <h2 class="text-center">Conexões</h2>
+                <div class="info-box card">
+                    <div class="card-body" id="users-box">
+                        {% comment %} {% for user, score in match.get_score %} {% endcomment %}
+                            <div class="row player-box align-items-center">
+                                <div class="col-md-2 player-img">
+                                    <div>
+                                        <img class="img-fluid rounded-circle" src="{% static 'mainApp/img/user-default.jpg' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 player-name">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}</div>
+                                <div class="col-md-3 player-score">200 XP</div>
+                            </div>
+                        {% comment %} {% endfor %} {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock box_board %}
+
+{% block content %}
+    {{ block.super }} {# Importação do conteudo do bloco content do template base, que vem com o bloco box_board vazio, mas posicionado dentro de content #}
+{% endblock content %}
