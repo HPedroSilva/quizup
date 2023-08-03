@@ -92,10 +92,19 @@ class UserMatchesView(LoginRequiredMixin, ListView):
     template_name = "userMatches.html"
     context_object_name = "userMatches"
 
+    def get(self, request, *args, **kwargs):
+        allowed_filters = ['in_progress_matches', 'finished_matches', 'wins', 'podium_matches']
+        user = self.request.user.userprofile
+        self.userMatches = user.matches
+        filter = str(request.GET.get('filter', ''))
+        if filter and filter in allowed_filters:
+            self.userMatches = getattr(user, filter, None)
+        self.userMatches = self.userMatches.order_by("-start_date")
+        return super(UserMatchesView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        userMatches = self.get_queryset().filter(users=self.request.user)
-        context["userMatches"] = userMatches
+        context["userMatches"] = self.userMatches
         return context
     
 class HomeView(LoginRequiredMixin, TemplateView):

@@ -1,8 +1,91 @@
-{% for match in userMatches %}
-    <a href="{% url 'mainapp:match' pk=match.pk %}">Partida {{ match.pk }}</a><br>
-    Criada em: {{ match.start_date }}<br>
-    Categorias: {% for category in match.categories.all %}{{ category }}, {% endfor %}<br>
-    Participantes: {% for user in match.users.all %}{{ user }}, {% endfor %}
-    <br>
-    <br>
-{% endfor %}
+{% extends "base_navbar.html" %}
+
+{% load static %}
+
+{% block statics %}
+    {{ block.super }}
+    <style>
+        .card-match {
+            padding: 0;
+            color: #424242;
+            border: none;
+            margin: 2vh 0;
+        }
+        .box-title {
+            font-size: 1.5em;
+            margin-top: 2%;
+            color: #424242;
+        }
+        .matches {
+            justify-content: center;
+        }
+        .btn-search {
+            border-radius: 10px;
+            background-color: #F2F2F2;
+            color: #7E8389;
+        }
+        .btn-search-active {
+            background-color: #E92F48;
+            color: white;
+        }
+        .btn-search:hover {
+            background-color: #F2F2F2;
+            border: solid 1px #E92F48;
+            color: #7E8389;
+        }
+        .match-details {
+            font-size: 1rem;
+            padding: 0.8vh 1vw;
+            margin: 0;
+        }
+        .img-match {
+            border-radius: 9px 9px 9px 9px; 
+        }
+        .card-title {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+    </style>
+{% endblock statics %}
+
+{% block box_board %}
+    <div class="row">
+        <h1 class="box-title">Suas Partidas</h1>
+        <div class="my-2">
+            <a href="{% url 'mainapp:user_matches' %}" class="btn btn-search {% if not request.GET.filter %}btn-search-active{% endif %}" title="Partidas com perguntas a serem respondidas.">Pendentes</a>
+            <a href="{% url 'mainapp:user_matches' %}?filter=in_progress_matches" class="btn btn-search {% if request.GET.filter == 'in_progress_matches' %}btn-search-active{% endif %}" title="Partidas aguardando finalização dos oponentes.">Em andamento</a>
+            <a href="{% url 'mainapp:user_matches' %}?filter=finished_matches" class="btn btn-search {% if request.GET.filter == 'finished_matches' %}btn-search-active{% endif %}" title="Partidas finalizadas.">Finalizadas</a>
+            <a href="{% url 'mainapp:user_matches' %}?filter=wins" class="btn btn-search {% if request.GET.filter == 'wins' %}btn-search-active{% endif %}" title="Partidas que venci.">Minhas Vitórias</a>
+            <a href="{% url 'mainapp:user_matches' %}?filter=podium_matches" class="btn btn-search {% if request.GET.filter == 'podium_matches' %}btn-search-active{% endif %}" title="Partidas em que fiquei entre os 3 primeiros.">Meus Pódios</a>
+        </div>
+    </div>
+    <div class="row matches">
+        {% for match in userMatches %}
+            <div class="col-md-4">
+                <a href="{% url 'mainapp:match' pk=match.pk %}">
+                    <div class="card card-match">
+                        <img class="img-match" src="{% static 'mainApp/img/trivia.webp' %}" alt="Trivia img">
+                        <div class="row match-details">
+                            <div class="col-md-8">
+                                <h5 class="card-title">Partida {{ match.pk }}</h5>
+                                {% for category in match.categories.all %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                {% for user in match.users.all %}{{ user.first_name.0 }} {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-3">
+            <a class="btn w-100" href="{% url 'mainapp:create_match' %}">Nova Partida</a>
+        </div>
+    </div>
+{% endblock box_board %}
+
+{% block content %}
+    {{ block.super }} {# Importação do conteudo do bloco content do template base, que vem com o bloco box_board vazio, mas posicionado dentro de content #}
+{% endblock content %}
