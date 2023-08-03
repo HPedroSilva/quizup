@@ -11,4 +11,5 @@ urlpatterns = [
     path("user-matches/", views.UserMatchesView.as_view(), name="user_matches"),
     path("import-questions/", views.ImportQuestionsView.as_view(), name="import_questions"),
     path("profile/<str:username>", views.UserProfileView.as_view(), name="user_profile"),
+    path("ranking", views.RankingView.as_view(), name="ranking"),
 ]

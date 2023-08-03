@@ -1,0 +1,55 @@
+{% extends "base_navbar.html" %}
+
+{% load static %}
+
+{% block statics %}
+    {{ block.super }}
+{% endblock statics %}
+
+{% block box_board %}
+    <div class="row row-cols-1">
+        <div class="col">
+            <div class="">
+                <h2 class="text-center">Ranking Geral</h2>
+                <p>Veja seu progresso em relação a seus amigos no QuizUp</p>
+                <div class="info-box card">
+                    <div class="card-body" id="users-box">
+                        {% comment %} {% for user in  %} {% endcomment %}
+                            <div class="row player-box align-items-center">
+                                <div class="col-md-2 player-img">
+                                    <div>
+                                        <img class="img-fluid rounded-circle" src="{% static 'mainApp/img/user-default.jpg' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 player-name">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}</div>
+                                <div class="col-md-3 player-score">200 XP</div>
+                            </div>
+                            <div class="row player-box align-items-center">
+                                <div class="col-md-2 player-img">
+                                    <div>
+                                        <img class="img-fluid rounded-circle" src="{% static 'mainApp/img/user-default.jpg' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 player-name">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}</div>
+                                <div class="col-md-3 player-score">200 XP</div>
+                            </div>
+                            <div class="row player-box align-items-center">
+                                <div class="col-md-2 player-img">
+                                    <div>
+                                        <img class="img-fluid rounded-circle" src="{% static 'mainApp/img/user-default.jpg' %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 player-name">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user }}{% endif %}</div>
+                                <div class="col-md-3 player-score">200 XP</div>
+                            </div>
+                        {% comment %} {% endfor %} {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock box_board %}
+
+{% block content %}
+    {{ block.super }} {# Importação do conteudo do bloco content do template base, que vem com o bloco box_board vazio, mas posicionado dentro de content #}
+{% endblock content %}

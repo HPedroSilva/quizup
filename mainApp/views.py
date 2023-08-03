@@ -172,3 +172,6 @@ class ImportQuestionsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 class UserProfileView(LoginRequiredMixin, TemplateView):
     model = User
     template_name = "user_profile.html"
+
+class RankingView(LoginRequiredMixin, TemplateView):
+    template_name = "ranking.html"
