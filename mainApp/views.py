@@ -69,7 +69,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
 class CreateMatchView(LoginRequiredMixin, CreateView):
     model = Match
     fields = ["users", "level", "categories"]
-    template_name = "createMatchForm.html"
+    template_name = "create_match.html"
     success_url = reverse_lazy("mainapp:home")
 
 class MatchView(LoginRequiredMixin, DetailView):

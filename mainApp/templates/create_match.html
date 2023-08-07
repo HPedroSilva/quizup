@@ -1,0 +1,19 @@
+{% extends "base_navbar.html" %}
+
+{% load bootstrap5 %}
+{% load static %}
+
+{% block statics %}
+    {{ block.super }}
+{% endblock statics %}
+
+{% block box_board %}
+    <form method="post">{% csrf_token %}
+        {% bootstrap_form form %}
+        <input class="btn md-4" type="submit" value="Criar Partida">
+    </form>
+{% endblock box_board %}
+
+{% block content %}
+    {{ block.super }}
+{% endblock content %}
