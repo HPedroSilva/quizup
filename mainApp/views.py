@@ -26,6 +26,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     template_name = "answerQuestion.html"
     question = Question.objects.none()
     match = Match.objects.none()
+    question_start_time = None
     
     def get(self, request, *args, **kwargs):
         match_pk = request.GET.get("match")
@@ -33,13 +34,11 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         self.user = request.user
 
         if request.user in match.users.all():
+            user_answer = UserAnswer.objects.none()
             self.match = match
             answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match)
             pre_answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match, useranswer__end_date=None)
             not_answered_questions = match.questions.exclude(pk__in = answered_questions)
-            print(f"Answered: \n{answered_questions}\n")
-            print(f"Pre Answered: \n{pre_answered_questions}\n")
-            print(f"Not Answered: \n{not_answered_questions}\n")
             for question in pre_answered_questions:
                 user_answer = UserAnswer.objects.filter(user = request.user, match_answer = match, question = question).first()
                 if user_answer:
@@ -56,6 +55,11 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
                 if self.question:
                     user_answer = UserAnswer(user=request.user, question=self.question, start_date=timezone.now(), match_answer=match)
                     user_answer.save()
+            if user_answer:
+                duration = timezone.now() - user_answer.start_date
+                self.question_start_time = 20 - min(duration.seconds, 20)
+            else:
+                self.question_start_time = 20
             return super(AnswerQuestionView, self).get(request, *args, **kwargs)
         else:
             return HttpResponse("Você não está nessa partida")
@@ -96,6 +100,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         context['question'] = self.question
         context['match'] = self.match
         context['user_questions_answered'] = self.match.get_user_questions_answered(self.user)
+        context['question_start_time'] = self.question_start_time
         return context
 
 class CreateMatchView(LoginRequiredMixin, CreateView):
