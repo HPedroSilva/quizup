@@ -10,7 +10,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from mainApp.models import Option, Question, Match, UserAnswer
+from mainApp.models import Option, Question, Match, UserAnswer, Category, LEVEL_CHOICES
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import UserPassesTestMixin
 from mainApp.forms import ImportQuestionsForm
