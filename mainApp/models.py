@@ -100,15 +100,21 @@ class Match(models.Model):
 class UserAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    option = models.ForeignKey(Option, on_delete=models.PROTECT)
-    date = models.DateTimeField(default=timezone.now)
+    option = models.ForeignKey(Option, on_delete=models.PROTECT, null=True)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(null=True)
+    is_expired = models.BooleanField(default=False)
     match_answer = models.ForeignKey(Match, on_delete=models.CASCADE)
 
     @property
     def judgment(self):
-        # Returna True se a resposta da perguta estiver correta e False caso contrário
-        return self.option == self.question.answer
+        ''' Returna True se a resposta da pergunta estiver correta e False se estiver incorreta ou a resposta expirou '''
+        return True if self.option and self.option == self.question.answer else False
 
+    @property
+    def is_done(self):
+        ''' Retorna true se foi respondida pelo usuário em tempo hábil '''
+        return True if self.option and not self.is_expired else False
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     score = models.IntegerField("Pontuação do usuário")

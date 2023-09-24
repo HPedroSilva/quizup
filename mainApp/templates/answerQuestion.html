@@ -44,30 +44,46 @@
             width: 100%;
             display: none;
         }
+        .judgment-icon.bi-check-circle-fill {
+            color: #1EE76E;
+        }
+        .judgment-icon.bi-x-circle-fill {
+            color: #741C28;
+        }
     </style>
     <script>
         {% if question %}
-            function disableButtons(buttons) {
+            var interval;
+
+            function disableButtons() {
+                buttons = document.getElementsByClassName("option");
                 for(i=0; i<buttons.length; i++) {
                     buttons[i].disabled = true;
                 }
             }
 
-            function manageButtons(judgment, option_pk) {
-                buttonsToDisable = document.getElementsByClassName("option");
-                disableButtons(buttonsToDisable);
-
+            function activateBtnNext() {
                 btnNext = document.getElementById("btn-next");
                 btnNext.style.display = "block";
+            }
+
+            function manageButtons(judgment, option_pk) {
+                disableButtons();
+                activateBtnNext();
 
                 if(judgment == "right") {
                     document.getElementById("option-" + option_pk).classList.add("option-right");
+                    document.getElementById("timer").innerHTML = "<i class='bi bi-check-circle-fill judgment-icon'></i>";
                 } else if(judgment == "wrong") {
                     document.getElementById("option-" + option_pk).classList.add("option-wrong");
+                    document.getElementById("timer").innerHTML = "<i class='bi bi-x-circle-fill judgment-icon'></i>";
+                } else if(judgment == "expired") {
+                    console.log("Time expired");
                 }
             }
 
             function answer(option_pk) {
+                clearInterval(interval);
                 fetch("{% url 'mainapp:answer_question' %}", {
                     method: 'POST',
                     headers: {
@@ -102,6 +118,25 @@
                     return cookieValue;
                 }
             }
+
+            function timeOut(){
+                disableButtons();
+                document.getElementById("timer").innerHTML = "O tempo acabou!";
+                activateBtnNext();
+            }
+
+            window.onload = function() {
+                let count = {{ question_start_time }};
+                interval = setInterval(() => {
+                    if(count <= 0) {
+                        clearInterval(interval);
+                        timeOut();
+                    } else {
+                        count--;
+                        document.getElementById("timer").innerHTML = count;
+                    }
+                }, 1000)
+            };
         {% endif %} 
     </script>
 {% endblock statics %}
@@ -110,7 +145,7 @@
     {% if question %}
         <div id="head">
             <div class="row justify-content-end"><div class="col-md-2"><div class="question-indicator" title="Você respondeu {{ user_questions_answered }} de {{ match.n_questions }} questões."><i class="bi bi-star-fill"></i> {{ user_questions_answered }}/{{ match.n_questions }}</div></div></div>
-            <div class="row justify-content-center"><div class="col-md-2"><div id="timer">5</div></div></div>
+            <div class="row justify-content-center"><div class="col-md-2"><div id="timer">{{ question_start_time }}</div></div></div>
             <div class="row justify-content-center"><div class="col-md-12"><div id="question">{{ question }}</div></div></div>
         </div>
         <div id="options">

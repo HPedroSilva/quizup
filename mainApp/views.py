@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.mixins import UserPassesTestMixin
 from mainApp.forms import ImportQuestionsForm
 from django.conf import settings
+from django.utils import timezone
 import os
 import json
 
@@ -25,6 +26,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     template_name = "answerQuestion.html"
     question = Question.objects.none()
     match = Match.objects.none()
+    question_start_time = None
     
     def get(self, request, *args, **kwargs):
         match_pk = request.GET.get("match")
@@ -32,9 +34,32 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         self.user = request.user
 
         if request.user in match.users.all():
+            user_answer = UserAnswer.objects.none()
             self.match = match
             answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match)
-            self.question = match.questions.exclude(pk__in = answered_questions).first()
+            pre_answered_questions = match.questions.filter(useranswer__user = request.user, useranswer__match_answer = match, useranswer__end_date=None)
+            not_answered_questions = match.questions.exclude(pk__in = answered_questions)
+            for question in pre_answered_questions:
+                user_answer = UserAnswer.objects.filter(user = request.user, match_answer = match, question = question).first()
+                if user_answer:
+                    duration = timezone.now() - user_answer.start_date
+                    if duration.seconds < 20:
+                        self.question = question
+                        break
+                    else:
+                        user_answer.end_date = timezone.now()
+                        user_answer.is_expired = True
+                        user_answer.save()
+            if not self.question:
+                self.question = not_answered_questions.first()
+                if self.question:
+                    user_answer = UserAnswer(user=request.user, question=self.question, start_date=timezone.now(), match_answer=match)
+                    user_answer.save()
+            if user_answer:
+                duration = timezone.now() - user_answer.start_date
+                self.question_start_time = 20 - min(duration.seconds, 20)
+            else:
+                self.question_start_time = 20
             return super(AnswerQuestionView, self).get(request, *args, **kwargs)
         else:
             return HttpResponse("Você não está nessa partida")
@@ -50,12 +75,23 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         option_pk = data.get("option")
         option = get_object_or_404(Option, pk=option_pk)
         
-        if not UserAnswer.objects.filter(user=request.user, question=question, match_answer=match).exists() and request.user in match.users.all() and question in match.questions.all() and option in question.option_set.all(): # Verificações de segurança, para evitar fraudes (o usuário está na partida, a questão é da partida, a opção é da questão, essa questão não foi respondida por esse usuário na partida)
-            user_answer = UserAnswer(user=request.user, question=question, option=option, match_answer=match)
-            user_answer.save()
+        user_answer = UserAnswer.objects.filter(user = request.user, match_answer = match, question = question).first()
+        if user_answer:
+            duration = timezone.now() - user_answer.start_date
+            if not user_answer.is_done and request.user in match.users.all() and question in match.questions.all() and option in question.option_set.all(): # Verificações de segurança, para evitar fraudes (o usuário está na partida, a questão é da partida, a opção é da questão, essa questão não foi respondida por esse usuário na partida)
 
-            judgment = "right" if user_answer.judgment else "wrong"
-            return HttpResponse(headers={"judgment": judgment}, status=200)
+                user_answer.end_date = timezone.now()
+
+                if duration.seconds < 20:
+                    user_answer.option=option
+                    judgment = "right" if user_answer.judgment else "wrong"
+
+                else:
+                    user_answer.is_expired = True
+                    judgment = "expired"
+
+                user_answer.save()
+                return HttpResponse(headers={"judgment": judgment}, status=200)
         
         return HttpResponse(status=403)
 
@@ -64,6 +100,7 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
         context['question'] = self.question
         context['match'] = self.match
         context['user_questions_answered'] = self.match.get_user_questions_answered(self.user)
+        context['question_start_time'] = self.question_start_time
         return context
 
 class CreateMatchView(LoginRequiredMixin, CreateView):
