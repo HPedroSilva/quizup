@@ -44,10 +44,10 @@ class Option(models.Model):
 class Match(models.Model):
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(null=True, blank=True)
-    users = models.ManyToManyField(User, related_name="users_match")
+    users = models.ManyToManyField(User, related_name="users_match", verbose_name="Participantes")
     winner = models.ForeignKey(User, on_delete=models.PROTECT, related_name="user_winner", null=True, blank=True)
     level = models.CharField("Nível das perguntas", max_length=1, choices=LEVEL_CHOICES)
-    categories = models.ManyToManyField(Category)
+    categories = models.ManyToManyField(Category, verbose_name="Categorias")
     questions = models.ManyToManyField(Question, blank=True)
 
     class Meta:
