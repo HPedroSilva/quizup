@@ -13,7 +13,7 @@ from django.views.generic.detail import DetailView
 from mainApp.models import Option, Question, Match, UserAnswer, Category, LEVEL_CHOICES
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import UserPassesTestMixin
-from mainApp.forms import ImportQuestionsForm
+from mainApp.forms import ImportQuestionsForm, CreateMatchForm
 from django.conf import settings
 from django.utils import timezone
 import os
@@ -105,9 +105,9 @@ class AnswerQuestionView(LoginRequiredMixin, TemplateView):
 
 class CreateMatchView(LoginRequiredMixin, CreateView):
     model = Match
-    fields = ["users", "level", "categories"]
     template_name = "create_match.html"
     success_url = reverse_lazy("mainapp:home")
+    form_class = CreateMatchForm
 
 class MatchView(LoginRequiredMixin, DetailView):
     model = Match
