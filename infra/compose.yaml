@@ -1,0 +1,12 @@
+services:
+  database:
+    container_name: "postgres-dev"
+    image: "postgres:16.0-alpine3.18"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=quizup
+      - POSTGRES_USER=quizup
+      - POSTGRES_PASSWORD=SD0983masdf@#
+    volumes:
+      - ./postgres:/var/lib/postgres
