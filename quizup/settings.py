@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+from utils.environment import comma_separated_str_to_list
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parents[2]
 
@@ -21,13 +23,12 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-90+ga(#r&w^o)v4av#k&1sxrbsu+tufc1lq&evg-rn&$&%@sx('
+SECRET_KEY = os.environ.get('SECRET_KEY', 'teste')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get('DEBUG') == 'True' else False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = comma_separated_str_to_list(os.environ.get('ALLOWED_HOSTS'))
 
 # Application definition
 
@@ -77,12 +78,12 @@ WSGI_APPLICATION = 'quizup.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'quizup',
-        'USER': 'quizup',
-        'PASSWORD': 'SD0983masdf@#',
-        'HOST': '127.0.0.1',
-        'PORT': '5432', 
+        'ENGINE': os.environ.get('DATABASE_ENGINE'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
 
@@ -135,5 +136,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication
 
 LOGIN_URL = 'login'
-# LOGIN_REDIRECT_URL = '' # Definir a página inicial do game
 LOGOUT_REDIRECT_URL = 'login'

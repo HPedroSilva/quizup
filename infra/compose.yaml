@@ -3,10 +3,13 @@ services:
     container_name: "postgres-dev"
     image: "postgres:16.0-alpine3.18"
     ports:
-      - "5432:5432"
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+    env_file:
+      - ../.env
     environment:
-      - POSTGRES_DB=quizup
-      - POSTGRES_USER=quizup
-      - POSTGRES_PASSWORD=SD0983masdf@#
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - PGPORT=${DATABASE_PORT}
     volumes:
       - ./postgres:/var/lib/postgres
