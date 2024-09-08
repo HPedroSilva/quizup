@@ -12,12 +12,13 @@ psycopg2 = "~=2.9.6"
 ipython = "~=8.14"
 
 [scripts]
+"dev" = "sh -c 'trap \"pipenv run services:stop\" INT TERM && pipenv run dev:flat'"
+"dev:flat" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "migrate" = "python manage.py migrate"
 "runserver" = "python manage.py runserver"
 "services:up" = "docker compose -f infra/compose.yaml up -d"
 "services:stop" = "docker compose -f infra/compose.yaml stop"
 "services:down" = "sh -c 'pipenv run services:stop && docker compose -f infra/compose.yaml rm -f'"
-"dev" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "fill-dev-database" = "sh -c 'pipenv run services:down && pipenv run services:up && python infra/scripts/wait-for-postgres.py && cat infra/postgres/quizup.sql | docker exec -i postgres-dev psql -U quizup && pipenv run migrate && pipenv run runserver'"
 
 [requires]
