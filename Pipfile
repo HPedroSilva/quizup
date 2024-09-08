@@ -10,6 +10,9 @@ psycopg2 = "~=2.9.6"
 
 [dev-packages]
 ipython = "~=8.14"
+flake8 = "*"
+isort = "*"
+pylint = "*"
 
 [scripts]
 "migrate" = "python manage.py migrate"
@@ -19,6 +22,9 @@ ipython = "~=8.14"
 "services:down" = "sh -c 'pipenv run services:stop && docker compose -f infra/compose.yaml rm -f'"
 "dev" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "fill-dev-database" = "sh -c 'pipenv run services:down && pipenv run services:up && python infra/scripts/wait-for-postgres.py && cat infra/postgres/quizup.sql | docker exec -i postgres-dev psql -U quizup && pipenv run migrate && pipenv run runserver'"
+"lint:quality" = "pylint ."
+"lint:style" = "sh -c 'flake8; pipenv run lint:sort'"
+"lint:sort" = "isort . --check-only"
 
 [requires]
 python_version = "3.10"
