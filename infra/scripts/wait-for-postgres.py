@@ -7,6 +7,7 @@ def check_postgres():
         capture_output=True,
         text=True,
         timeout=10000,
+        check=False
     )
     if result.returncode != 0 and "accepting connections" not in result.stdout:
         check_postgres()
