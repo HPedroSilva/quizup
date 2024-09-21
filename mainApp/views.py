@@ -1,23 +1,23 @@
-from typing import Any, Dict
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 import json
+import os
+from typing import Any, Dict
+
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
-from mainApp.models import Option, Question, Match, UserAnswer
-from django.contrib.auth.models import User
-from django.contrib.auth.mixins import UserPassesTestMixin
+
 from mainApp.forms import ImportQuestionsForm
-from django.conf import settings
-from django.utils import timezone
-import os
-import json
+from mainApp.models import Match, Option, Question, UserAnswer
+
 
 class AnswerQuestionView(LoginRequiredMixin, TemplateView):
     """

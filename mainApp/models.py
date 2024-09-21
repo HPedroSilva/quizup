@@ -1,10 +1,10 @@
+import random
+
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils import timezone
 from django.urls import reverse_lazy
-from django.contrib.auth.models import User
-import random
 from django.utils import timezone
 
 LEVEL_CHOICES = (
@@ -117,7 +117,7 @@ class UserAnswer(models.Model):
         return True if self.option and not self.is_expired else False
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score = models.IntegerField("Pontuação do usuário")
+    score = models.IntegerField("Pontuação do usuário", default=0)
 
     def __str__(self):
         return str(self.user.first_name)
