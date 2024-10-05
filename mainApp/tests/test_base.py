@@ -12,16 +12,26 @@ class MainAppTestBase(TestCase):
     def tearDown(self) -> None:
         return super().tearDown()
 
-    def make_user(self, username='my_user', password='my_pass'):
-        user = User.objects.create_user(username=username, password=password)
-        UserProfile.objects.create(user=user)
-        return user
-
     def login(self, username='my_user', password='my_pass'):
         self.client.login(username=username, password=password)
 
-    def make_logged_user(self, username='my_user', password='my_pass'):
-        user = self.make_user(username, password)
+    def make_user(self, username='my_user', password='my_pass', super=False):
+        if super is True:
+            user = User.objects.create_superuser(
+                username=username, password=password
+            )
+        else:
+            user = User.objects.create_user(
+                username=username, password=password
+            )
+
+        UserProfile.objects.create(user=user)
+        return user
+
+    def make_logged_user(
+        self, username='my_user', password='my_pass', super=False
+    ):
+        user = self.make_user(username, password, super)
         self.login(username, password)
         return user
 
