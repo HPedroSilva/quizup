@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 
-from mainApp.models import Category, Match, Question, UserProfile
+from mainApp.models import Category, Match, Option, Question, UserProfile
 
 
 class MainAppTestBase(TestCase):
@@ -81,3 +81,10 @@ class MainAppTestBase(TestCase):
         match.categories.add(category)
 
         return match
+
+    def make_option(self, question=None, text='Test Option', answer=False):
+        if question is None:
+            question = self.make_question()
+        return Option.objects.create(
+            question=question, text=text, answer=answer
+        )
