@@ -29,7 +29,7 @@ class MainAppViewTest(MainAppTestBase):
 
     def test_home_template_shows_matches(self):
         user = self.make_logged_user()
-        match = self.make_match(user=user)
+        match = self.make_match(users=[user])
         response = self.client.get(reverse('mainapp:home'))
         response_matches = response.context['userMatches']
         self.assertEqual(response_matches.first().id, match.id)
@@ -40,7 +40,7 @@ class MainAppViewTest(MainAppTestBase):
 
     def test_match_view_returns_status_code_200(self):
         user = self.make_logged_user()
-        match = self.make_match(user=user)
+        match = self.make_match(users=[user])
         response = self.client.get(
             reverse('mainapp:match', kwargs={'pk': match.pk})
         )
@@ -59,7 +59,7 @@ class MainAppViewTest(MainAppTestBase):
 
     def test_answer_question_view_returns_status_code_200(self):
         user = self.make_logged_user()
-        match = self.make_match(user=user)
+        match = self.make_match(users=[user])
         response = self.client.get(
             reverse('mainapp:answer_question'), data={'match': match.pk}
         )
