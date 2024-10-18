@@ -2,7 +2,14 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 
-from mainApp.models import Category, Match, Option, Question, UserProfile
+from mainApp.models import (
+    Category,
+    Match,
+    Option,
+    Question,
+    UserAnswer,
+    UserProfile,
+)
 
 
 class MainAppTestBase(TestCase):
@@ -40,7 +47,7 @@ class MainAppTestBase(TestCase):
 
     def make_question(
         self,
-        text='question_1_text',
+        text='question_text',
         category_data=None,
         category=None,
         level='1',
@@ -59,7 +66,14 @@ class MainAppTestBase(TestCase):
             active=active,
         )
 
-    def make_match(self, start_date=None, level='1', user=None, category=None):
+    def make_match(
+        self,
+        start_date=None,
+        level='1',
+        user=None,
+        category=None,
+        questions_number=3,
+    ):
         if start_date is None:
             start_date = timezone.now()
 
@@ -69,9 +83,10 @@ class MainAppTestBase(TestCase):
         if user is None:
             user = self.make_user()
 
-        self.make_question(category=category)
-        self.make_question(category=category)
-        self.make_question(category=category)
+        questions = [
+            self.make_question(category=category)
+            for _ in range(questions_number)
+        ]
 
         match = Match.objects.create(
             start_date=start_date,
@@ -79,6 +94,7 @@ class MainAppTestBase(TestCase):
         )
         match.users.add(user)
         match.categories.add(category)
+        match.questions.add(*questions)
 
         return match
 
@@ -87,4 +103,23 @@ class MainAppTestBase(TestCase):
             question = self.make_question()
         return Option.objects.create(
             question=question, text=text, answer=answer
+        )
+
+    def make_user_answer(
+        self, user=None, match=None, question=None, option=None, correct=False
+    ):
+        if match is None:
+            match = self.make_match(user=user)
+        if user is None:
+            user = match.users.first()
+        if question is None:
+            question = match.questions.first()
+        if option is None:
+            option = self.make_option(question=question, answer=correct)
+
+        return UserAnswer.objects.create(
+            user=user,
+            question=question,
+            option=option,
+            match_answer=match,
         )
