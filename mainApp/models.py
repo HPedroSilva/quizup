@@ -161,14 +161,18 @@ class UserProfile(models.Model):
         return in_progress
     
     def min_position_matches(self, min_position):
-        '''Retorna um queryset com as partidas em que o usuário ficou no mínimo na posição passada como argumento.'''
+        '''
+        Retorna um queryset com as partidas em que o usuário ficou no mínimo na posição passada como argumento.
+        '''
         user_matches = self.matches
         user_position_matches_list = []
         for match in user_matches:
-            ranking = match.get_score()[:min_position]
+            ranking = map(lambda i: i[0], match.get_score()[:min_position])
             if self.user in ranking:
                 user_position_matches_list.append(match.pk)
-        user_min_position_matches = user_matches.filter(pk__in=user_position_matches_list)
+        user_min_position_matches = user_matches.filter(
+            pk__in=user_position_matches_list
+        )
         return user_min_position_matches
     
     @property
