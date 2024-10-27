@@ -1,11 +1,9 @@
-from unittest import skip
-
 from .test_base import MainAppTestBase
 
 
 class UserProfileModelTest(MainAppTestBase):
     def setUp(self) -> None:
-        user = self.make_user()
+        user = self.make_user(username='user_1')
         self.user_profile = user.userprofile
         return super().setUp()
 
@@ -19,7 +17,7 @@ class UserProfileModelTest(MainAppTestBase):
         When a user doesn't have any matches, 'matches' must return an empty queryset.
         '''
         user_1 = self.user_profile
-        user_2 = self.make_user(username='user2')
+        user_2 = self.make_user(username='user_2')
         self.make_match(users=[user_2])
         self.assertEqual(len(user_1.matches), 0)
 
@@ -28,7 +26,7 @@ class UserProfileModelTest(MainAppTestBase):
         When a user have matches, 'matches' must return a queryset with all it's matches.
         '''
         user_1 = self.user_profile.user
-        user_2 = self.make_user(username='user2')
+        user_2 = self.make_user(username='user_2')
         self.make_match(users=[user_1])
         self.make_match(users=[user_1])
         self.make_match(users=[user_2])
@@ -86,16 +84,20 @@ class UserProfileModelTest(MainAppTestBase):
 
         self.assertEqual(len(self.user_profile.finished_matches), 0)
 
-    @skip('Function used in the test has bugs')
     def test_min_position_matches_return_correct_matches(self):
+        questions_number = 3
+        questions_answers_order = [True, True, False]
 
         user_1 = self.user_profile.user
         user_2 = self.make_user(username='user_2')
         user_3 = self.make_user(username='user_3')
 
-        match_1 = self.make_match(users=[user_1, user_2, user_3])
-        match_2 = self.make_match(users=[user_1, user_2, user_3])
-        self.make_match(users=[user_1, user_2, user_3])
+        match_1 = self.make_match(
+            users=[user_1, user_2, user_3], questions_number=questions_number
+        )
+        match_2 = self.make_match(
+            users=[user_1, user_2, user_3], questions_number=questions_number
+        )
 
         # making user_1 stay in position 2 in match_1
         # user_2 answers all questions correctly in match_1
@@ -106,7 +108,7 @@ class UserProfileModelTest(MainAppTestBase):
 
         # user_1 answers 2 questions correctly in match_1
         for question, correct in zip(
-            match_1.questions.all(), [True, True, False]
+            match_1.questions.all(), questions_answers_order
         ):
             self.make_user_answer(
                 user=user_1, match=match_1, correct=correct, question=question
@@ -121,14 +123,16 @@ class UserProfileModelTest(MainAppTestBase):
 
         # user_2 answers 2 questions correctly in match_2
         for question, correct in zip(
-            match_2.questions.all(), [True, True, False]
+            match_2.questions.all(), questions_answers_order
         ):
             self.make_user_answer(
                 user=user_2, match=match_2, correct=correct, question=question
             )
 
         # user_1 was in position 2 in match_1, and position 3 in match_2. He was in at least postion 2 in 2 matches.
+        min_matches = self.user_profile.min_position_matches(2)
+
         self.assertEqual(
-            set(self.user_profile.min_position_matches(2)),
+            set(min_matches),
             set([match_1, match_2]),
         )
