@@ -97,6 +97,17 @@ class Match(models.Model):
         # Retorna o vencedor da partida, e sua pontuação
         return self.get_score()[0]
 
+    def assign_questions(self, qtd=3):
+        # Assign a specific quantity of questions to the match
+        if self.questions.count() == 0:
+            questions = Question.objects.filter(level=self.level)
+            questions_pks = list(questions.values_list('pk', flat=True))
+            random_pks = random.sample(questions_pks, k=qtd)
+            questions = questions.filter(pk__in=random_pks)
+            self.questions.set(questions)
+            Match.objects.filter(pk=self.pk).update()
+
+
 class UserAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -185,17 +196,6 @@ class UserProfile(models.Model):
         '''Retorna um queryset com as partidas que o usuário venceu.'''
         wins = self.matches.filter(winner=self.user)
         return wins
-
-@receiver(post_save, sender=Match)
-def match_post_save(sender, instance, **kwargs):
-    # Gera uma quantidade específica de questões aleatórias para uma partida, assim que a partida é criada.
-    if instance.questions.count() == 0:
-        questions = Question.objects.filter(level=instance.level)
-        questions_pks = list(questions.values_list('pk', flat=True))
-        random_pks = random.sample(questions_pks, k=3)
-        questions = questions.filter(pk__in=random_pks)
-        instance.questions.set(questions)
-        Match.objects.filter(pk=instance.pk).update()
 
 @receiver(post_save, sender=UserAnswer)
 def user_answer_post_save(sender, instance, **kwargs):

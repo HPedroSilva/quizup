@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic.base import TemplateView
@@ -108,6 +108,11 @@ class CreateMatchView(LoginRequiredMixin, CreateView):
     fields = ["users", "level", "categories"]
     template_name = "createMatchForm.html"
     success_url = reverse_lazy("mainapp:home")
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.assign_questions()
+        return redirect(self.success_url)
 
 class MatchView(LoginRequiredMixin, DetailView):
     model = Match
