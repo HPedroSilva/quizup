@@ -1,10 +1,10 @@
+import random
+
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils import timezone
 from django.urls import reverse_lazy
-from django.contrib.auth.models import User
-import random
 from django.utils import timezone
 
 LEVEL_CHOICES = (
@@ -97,6 +97,17 @@ class Match(models.Model):
         # Retorna o vencedor da partida, e sua pontuação
         return self.get_score()[0]
 
+    def assign_questions(self, qtd=3):
+        # Assign a specific quantity of questions to the match
+        if self.questions.count() == 0:
+            questions = Question.objects.filter(level=self.level)
+            questions_pks = list(questions.values_list('pk', flat=True))
+            random_pks = random.sample(questions_pks, k=qtd)
+            questions = questions.filter(pk__in=random_pks)
+            self.questions.set(questions)
+            Match.objects.filter(pk=self.pk).update()
+
+
 class UserAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -117,7 +128,7 @@ class UserAnswer(models.Model):
         return True if self.option and not self.is_expired else False
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score = models.IntegerField("Pontuação do usuário")
+    score = models.IntegerField("Pontuação do usuário", default=0)
 
     def __str__(self):
         return str(self.user.first_name)
@@ -161,14 +172,18 @@ class UserProfile(models.Model):
         return in_progress
     
     def min_position_matches(self, min_position):
-        '''Retorna um queryset com as partidas em que o usuário ficou no mínimo na posição passada como argumento.'''
+        '''
+        Retorna um queryset com as partidas em que o usuário ficou no mínimo na posição passada como argumento.
+        '''
         user_matches = self.matches
         user_position_matches_list = []
         for match in user_matches:
-            ranking = match.get_score()[:min_position]
+            ranking = map(lambda i: i[0], match.get_score()[:min_position])
             if self.user in ranking:
                 user_position_matches_list.append(match.pk)
-        user_min_position_matches = user_matches.filter(pk__in=user_position_matches_list)
+        user_min_position_matches = user_matches.filter(
+            pk__in=user_position_matches_list
+        )
         return user_min_position_matches
     
     @property
@@ -181,17 +196,6 @@ class UserProfile(models.Model):
         '''Retorna um queryset com as partidas que o usuário venceu.'''
         wins = self.matches.filter(winner=self.user)
         return wins
-
-@receiver(post_save, sender=Match)
-def match_post_save(sender, instance, **kwargs):
-    # Gera uma quantidade específica de questões aleatórias para uma partida, assim que a partida é criada.
-    if instance.questions.count() == 0:
-        questions = Question.objects.filter(level=instance.level)
-        questions_pks = list(questions.values_list('pk', flat=True))
-        random_pks = random.sample(questions_pks, k=3)
-        questions = questions.filter(pk__in=random_pks)
-        instance.questions.set(questions)
-        Match.objects.filter(pk=instance.pk).update()
 
 @receiver(post_save, sender=UserAnswer)
 def user_answer_post_save(sender, instance, **kwargs):
