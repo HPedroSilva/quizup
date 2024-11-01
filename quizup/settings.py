@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 from utils.environment import comma_separated_str_to_list
 
@@ -93,16 +93,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa
     },
 ]
 
@@ -122,10 +122,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-CONTENT_ROOT = os.path.join(BASE_DIR, "conteudo")
-STATIC_ROOT = os.path.join(BASE_DIR, "conteudo", "static")
+CONTENT_ROOT = os.path.join(BASE_DIR, 'conteudo')
+STATIC_ROOT = os.path.join(BASE_DIR, 'conteudo', 'static')
 STATIC_URL = 'static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "conteudo", "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, 'conteudo', 'media')
 MEDIA_URL = 'media/'
 
 # Default primary key field type

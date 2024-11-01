@@ -17,6 +17,7 @@ pytest = "*"
 pytest-django = "*"
 pytest-watch = "*"
 coverage = "*"
+black = "*"
 
 [scripts]
 "migrate" = "python manage.py migrate"

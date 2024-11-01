@@ -13,12 +13,6 @@ from mainApp.models import (
 
 
 class MainAppTestBase(TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
-
-    def tearDown(self) -> None:
-        return super().tearDown()
-
     def login(self, username='my_user', password='my_pass'):
         self.client.login(username=username, password=password)
 
@@ -28,9 +22,9 @@ class MainAppTestBase(TestCase):
         password='my_pass',
         first_name='my_user_first_name',
         last_name='my_user_last_name',
-        super=False,
+        super_user=False,
     ):
-        if super is True:
+        if super_user is True:
             user = User.objects.create_superuser(
                 username=username,
                 password=password,
@@ -49,10 +43,10 @@ class MainAppTestBase(TestCase):
         return user
 
     def make_logged_user(
-        self, username='my_user', password='my_pass', super=False
+        self, username='my_user', password='my_pass', super_user=False
     ):
         user = self.make_user(
-            username=username, password=password, super=super
+            username=username, password=password, super_user=super_user
         )
         self.login(username, password)
         return user

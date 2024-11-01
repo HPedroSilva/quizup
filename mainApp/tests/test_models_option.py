@@ -27,7 +27,7 @@ class OptionModelTest(MainAppTestBase):
         self.assertFalse(option.answer)
 
     def test_string_representation_returns_option_text(self):
-        text = "Test option text"
+        text = 'Test option text'
         self.option.text = text
         self.option.full_clean()
         self.option.save()
