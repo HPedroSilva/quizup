@@ -1,0 +1,18 @@
+[general]
+# Ignore rules, reference them by id or name (comma-separated)
+ignore=B6
+
+# Enable specific community contributed rules
+contrib=contrib-title-conventional-commits
+
+### Configuring rules ### 
+
+# [title-max-length]
+# line-length=80 
+
+# Setting contrib rule
+[contrib-title-conventional-commits]
+types=fix,feat,chore,docs,style,refactor,perf,test,revert,ci,build
+
+[title-min-length]
+min-length=20

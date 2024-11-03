@@ -17,6 +17,10 @@ pytest = "*"
 pytest-django = "*"
 pytest-watch = "*"
 coverage = "*"
+black = "*"
+gitlint = "*"
+pre-commit = "*"
+commitizen = "*"
 
 [scripts]
 "migrate" = "python manage.py migrate"
@@ -32,6 +36,7 @@ coverage = "*"
 "lint:quality" = "pylint ."
 "lint:style" = "sh -c 'flake8; pipenv run lint:sort'"
 "lint:sort" = "isort . --check-only"
+"init" = "sh -c 'pre-commit install'" # Set up all tools needed in the project
 
 [requires]
 python_version = "3.12"

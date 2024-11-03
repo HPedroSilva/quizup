@@ -10,7 +10,7 @@ class MatchModelTest(MainAppTestBase):
         return super().setUp()
 
     def test_match_level_raises_error_if_level_not_valid(self):
-        self.match.level = "11"
+        self.match.level = '11'
 
         with self.assertRaises(ValidationError):
             self.match.full_clean()
@@ -40,13 +40,13 @@ class MatchModelTest(MainAppTestBase):
 
         self.assertEqual(self.match.get_user_score(user), 2)
 
-    def test_get_user_questions_answered_returns_correct_number_when_none_answered(
+    def test_get_user_questions_answered_is_correct_when_none_answered(
         self,
     ):
         user = self.match.users.first()
         self.assertEqual(self.match.get_user_questions_answered(user), 0)
 
-    def test_get_user_questions_answered_returns_correct_number(self):
+    def test_get_user_questions_answered_is_correct(self):
         user = self.match.users.first()
         questions = self.match.questions.all()[:3]
         answers = [True, False, True]
@@ -61,11 +61,12 @@ class MatchModelTest(MainAppTestBase):
 
         self.assertEqual(self.match.get_user_questions_answered(user), 3)
 
-    def test_user_questions_to_answer_returns_correct_questions_when_none_answered(
+    def test_user_questions_to_answer_is_correct_when_none_answered(
         self,
     ):
         '''
-        When none of the questions in a match have been answered, user_questions_to_answer must returnall questions in
+        When none of the questions in a match have been answered,
+        user_questions_to_answer must returnall questions in
         the match
         '''
         user = self.match.users.first()
@@ -76,11 +77,12 @@ class MatchModelTest(MainAppTestBase):
 
         self.assertQuerySetEqual(questions_to_answer, questions)
 
-    def test_user_questions_to_answer_returns_correct_questions_when_all_answered(
+    def test_user_questions_to_answer_is_correct_when_all_answered(
         self,
     ):
         '''
-        When all the questions in a match have been answered, user_questions_to_answer must return zero questions
+        When all the questions in a match have been answered,
+        user_questions_to_answer must return zero questions
         '''
         user = self.match.users.first()
         questions = self.match.questions.all()[:3]

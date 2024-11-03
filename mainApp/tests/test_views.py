@@ -88,7 +88,7 @@ class MainAppViewTest(MainAppTestBase):
         self.assertIs(function.func.view_class, views.ImportQuestionsView)
 
     def test_import_questions_view_returns_status_code_200(self):
-        self.make_logged_user(super=True)
+        self.make_logged_user(super_user=True)
         response = self.client.get(reverse('mainapp:import_questions'))
         self.assertEqual(response.status_code, 200)
 

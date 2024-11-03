@@ -1,5 +1,5 @@
 [flake8]
-extend-ignore = 
+extend-ignore = W503, W504
 max-line-length = 79
 indent-size = 4
 exclude = migrations

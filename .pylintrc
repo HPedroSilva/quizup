@@ -438,7 +438,8 @@ disable=C,R,
         use-symbolic-message-instead,
         use-implicit-booleaness-not-comparison-to-string,
         use-implicit-booleaness-not-comparison-to-zero,
-        missing-docstring
+        missing-docstring,
+        W0201
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -637,7 +638,8 @@ callbacks=cb_,
 dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_
 
 # Argument names that match this expression will be ignored.
-ignored-argument-names=_.*|^ignored_|^unused_
+#ignored-argument-names=_.*|^ignored_|^unused_
+ignored-argument-names=arg|args|kwargs|unused|^unused_|sender
 
 # Tells whether we should check for unused import in __init__ files.
 init-import=no

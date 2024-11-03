@@ -14,7 +14,8 @@ class UserProfileModelTest(MainAppTestBase):
 
     def test_matches_returns_no_matches_when_no_matches_for_user(self):
         '''
-        When a user doesn't have any matches, 'matches' must return an empty queryset.
+        When a user doesn't have any matches,
+        'matches' must return an empty queryset.
         '''
         user_1 = self.user_profile
         user_2 = self.make_user(username='user_2')
@@ -23,7 +24,8 @@ class UserProfileModelTest(MainAppTestBase):
 
     def test_matches_returns_all_matches_of_an_user(self):
         '''
-        When a user have matches, 'matches' must return a queryset with all it's matches.
+        When a user have matches, 'matches' must return a queryset
+        with all it's matches.
         '''
         user_1 = self.user_profile.user
         user_2 = self.make_user(username='user_2')
@@ -129,7 +131,8 @@ class UserProfileModelTest(MainAppTestBase):
                 user=user_2, match=match_2, correct=correct, question=question
             )
 
-        # user_1 was in position 2 in match_1, and position 3 in match_2. He was in at least postion 2 in 2 matches.
+        # user_1 was in position 2 in match_1, and position 3 in match_2.
+        # He was in at least postion 2 in 2 matches.
         min_matches = self.user_profile.min_position_matches(2)
 
         self.assertEqual(
