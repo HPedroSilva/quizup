@@ -7,6 +7,7 @@ name = "pypi"
 django = "~=4.2.1"
 django-bootstrap-v5 = "~=1.0.11"
 psycopg2 = "~=2.9.6"
+commitizen = "*"
 
 [dev-packages]
 ipython = "~=8.14"
@@ -18,6 +19,8 @@ pytest-django = "*"
 pytest-watch = "*"
 coverage = "*"
 black = "*"
+gitlint = "*"
+pre-commit = "*"
 
 [scripts]
 "migrate" = "python manage.py migrate"
@@ -33,6 +36,7 @@ black = "*"
 "lint:quality" = "pylint ."
 "lint:style" = "sh -c 'flake8; pipenv run lint:sort'"
 "lint:sort" = "isort . --check-only"
+"init" = "sh -c 'pre-commit install'" # Set up all tools needed in the project
 
 [requires]
 python_version = "3.12"
