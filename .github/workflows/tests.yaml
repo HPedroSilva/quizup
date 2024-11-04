@@ -1,0 +1,37 @@
+name: Automated Tests
+
+on: pull_request
+
+env:
+  # Setting environment variables with the value of a configuration variable
+  TEST: 'test'
+  DATABASE_ENGINE: ${{ vars.DATABASE_ENGINE }}
+  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+  DATABASE_USER: ${{ vars.DATABASE_USER }}
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+  DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+  DATABASE_PORT: ${{ vars.DATABASE_PORT }}
+  DEBUG: ${{ vars.DEBUG }}
+  ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+jobs:
+  test:
+    name: Tests Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.12
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install pipenv
+          pipenv install --dev
+
+      - name: Run Tests
+        run: pipenv run test
