@@ -1,0 +1,48 @@
+name: Linting
+
+on: pull_request
+
+jobs:
+  code-lint:
+    name: Code Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.12
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install pipenv
+          pipenv install --dev
+
+      - name: Quality lint
+        run: pipenv run lint:quality
+      
+      - name: Style lint
+        run: pipenv run lint:quality
+
+  commit-lint:
+    name: Commit Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.12
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install pipenv
+          pipenv install --dev
+
+      - run: pipenv run gitlint --commits ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }},${{ github.event.pull_request.head.sha }}

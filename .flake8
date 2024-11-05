@@ -1,0 +1,7 @@
+[flake8]
+extend-ignore = W503, W504
+max-line-length = 79
+indent-size = 4
+exclude = migrations
+max-complexity = 10
+statistics = True

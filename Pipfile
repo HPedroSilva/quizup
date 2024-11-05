@@ -1,0 +1,43 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = truee
+name = "pypi"
+
+[packages]
+django = "~=4.2.1"
+django-bootstrap-v5 = "~=1.0.11"
+psycopg2 = "~=2.9.6"
+
+[dev-packages]
+ipython = "~=8.14"
+flake8 = "*"
+isort = "*"
+pylint = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-watch = "*"
+coverage = "*"
+black = "*"
+gitlint = "*"
+pre-commit = "*"
+commitizen = "*"
+
+[scripts]
+"dev" = "sh -c 'trap \"pipenv run services:stop\" INT TERM && pipenv run dv:flat'"
+"dev:flat" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
+"migrate" = "python manage.py migrate"
+"runserver" = "python manage.py runserver"
+"services:up" = "docker compose -f infra/compose.yaml up -d"
+"services:stop" = "docker compose -f infra/compose.yaml stop"
+"services:down" = "sh -c 'pipenv run services:stop && docker compose -f infra/compose.yaml rm -f'"
+"test" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pytest'"
+"test:watch" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && ptw'"
+"test:coverage" = "sh -c 'coverage run -m pytest && coverage html'"
+"fill-dev-database" = "sh -c 'pipenv run services:down && pipenv run services:up && python infra/scripts/wait-for-postgres.py && cat infra/postgres/quizup.sql | docker exec -i postgres-dev psql -U quizup && pipenv run migrate && pipenv run runserver'"
+"lint:quality" = "pylint ."
+"lint:style" = "sh -c 'flake8; pipenv run lint:sort'"
+"lint:sort" = "isort . --check-only"
+"init" = "sh -c 'pre-commit install'" # Set up all tools needed in the project
+
+[requires]
+python_version = "3.12"

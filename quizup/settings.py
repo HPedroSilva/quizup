@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+
+from utils.environment import comma_separated_str_to_list
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -21,13 +23,12 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-90+ga(#r&w^o)v4av#k&1sxrbsu+tufc1lq&evg-rn&$&%@sx('
+SECRET_KEY = os.environ.get('SECRET_KEY', 'teste')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get('DEBUG') == 'True' else False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = comma_separated_str_to_list(os.environ.get('ALLOWED_HOSTS'))
 
 # Application definition
 
@@ -78,12 +79,12 @@ WSGI_APPLICATION = 'quizup.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'quizup',
-        'USER': 'quizup',
-        'PASSWORD': 'SD0983masdf@#',
-        'HOST': '127.0.0.1',
-        'PORT': '5432', 
+        'ENGINE': os.environ.get('DATABASE_ENGINE'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
 
@@ -93,16 +94,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa
     },
 ]
 
@@ -122,10 +123,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-CONTENT_ROOT = os.path.join(BASE_DIR, "conteudo")
-STATIC_ROOT = os.path.join(BASE_DIR, "conteudo", "static")
+CONTENT_ROOT = os.path.join(BASE_DIR, 'conteudo')
+STATIC_ROOT = os.path.join(BASE_DIR, 'conteudo', 'static')
 STATIC_URL = 'static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "conteudo", "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, 'conteudo', 'media')
 MEDIA_URL = 'media/'
 
 # Default primary key field type
@@ -136,5 +137,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication
 
 LOGIN_URL = 'login'
-# LOGIN_REDIRECT_URL = '' # Definir a página inicial do game
 LOGOUT_REDIRECT_URL = 'login'

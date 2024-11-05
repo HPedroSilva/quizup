@@ -1,0 +1,23 @@
+name: Check Safety
+
+on: pull_request
+
+jobs:
+  check-safety:
+    name: Check Safety
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.12
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install pipenv
+          pipenv install
+
+      - run: pipenv check --use-installed

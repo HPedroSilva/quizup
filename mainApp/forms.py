@@ -3,6 +3,7 @@ from django.db.models.base import Model
 from mainApp.models import Match, Category
 from django.contrib.auth.models import User
 
+
 class ImportQuestionsForm(forms.Form):
     file = forms.FileField()
 
