@@ -1,6 +1,6 @@
 [[source]]
 url = "https://pypi.org/simple"
-verify_ssl = true
+verify_ssl = truee
 name = "pypi"
 
 [packages]
@@ -23,12 +23,13 @@ pre-commit = "*"
 commitizen = "*"
 
 [scripts]
+"dev" = "sh -c 'trap \"pipenv run services:stop\" INT TERM && pipenv run dv:flat'"
+"dev:flat" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "migrate" = "python manage.py migrate"
 "runserver" = "python manage.py runserver"
 "services:up" = "docker compose -f infra/compose.yaml up -d"
 "services:stop" = "docker compose -f infra/compose.yaml stop"
 "services:down" = "sh -c 'pipenv run services:stop && docker compose -f infra/compose.yaml rm -f'"
-"dev" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "test" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pytest'"
 "test:watch" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && ptw'"
 "test:coverage" = "sh -c 'coverage run -m pytest && coverage html'"
