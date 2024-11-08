@@ -1,6 +1,6 @@
 [[source]]
 url = "https://pypi.org/simple"
-verify_ssl = truee
+verify_ssl = true
 name = "pypi"
 
 [packages]
@@ -37,7 +37,7 @@ commitizen = "*"
 "lint:quality" = "pylint ."
 "lint:style" = "sh -c 'flake8; pipenv run lint:sort'"
 "lint:sort" = "isort . --check-only"
-"init" = "sh -c 'pre-commit install'" # Set up all tools needed in the project
+"init" = "sh -c 'pipenv install -d && pre-commit install'" # Set up all tools needed in the project
 
 [requires]
 python_version = "3.12"
