@@ -187,13 +187,18 @@ class HomeView(LoginRequiredMixin, TemplateView):
             'finished_matches',
             'wins',
             'podium_matches',
+            'pending_matches',
         ]
+        default_filter = 'pending_matches'
+
         user = self.request.user.userprofile
         self.userMatches = user.matches
-        my_filter = str(request.GET.get('filter', ''))
-        if my_filter and my_filter in allowed_filters:
-            self.userMatches = getattr(user, my_filter, None)
+        active_filter = str(request.GET.get('filter', default_filter))
+
+        if active_filter and active_filter in allowed_filters:
+            self.userMatches = getattr(user, active_filter, None)
         self.userMatches = self.userMatches.order_by('-start_date')[:6]
+
         return super(HomeView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
