@@ -262,7 +262,7 @@ class UserProfile(models.Model):
         user_position_matches_list = []
         for match in user_matches:
             ranking = map(lambda i: i[0], match.get_score()[:min_position])
-            if self.user in ranking:
+            if self.user in ranking and match.is_finished:
                 user_position_matches_list.append(match.pk)
         user_min_position_matches = user_matches.filter(
             pk__in=user_position_matches_list
