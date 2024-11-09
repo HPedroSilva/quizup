@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from .test_base import MainAppTestBase
 
 
@@ -116,6 +118,11 @@ class UserProfileModelTest(MainAppTestBase):
                 user=user_1, match=match_1, correct=correct, question=question
             )
 
+        match_1.winner = user_2
+        match_1.end_date = timezone.now()
+        match_1.full_clean()
+        match_1.save()
+
         # making user_1 stay in position 1 in match_2
         # user_1 answers all questions correctly in match_2
         for question in match_2.questions.all():
@@ -130,6 +137,11 @@ class UserProfileModelTest(MainAppTestBase):
             self.make_user_answer(
                 user=user_2, match=match_2, correct=correct, question=question
             )
+
+        match_2.winner = user_1
+        match_2.end_date = timezone.now()
+        match_2.full_clean()
+        match_2.save()
 
         # user_1 was in position 2 in match_1, and position 3 in match_2.
         # He was in at least postion 2 in 2 matches.
