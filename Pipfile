@@ -23,9 +23,10 @@ pre-commit = "*"
 commitizen = "*"
 
 [scripts]
-"dev" = "sh -c 'trap \"pipenv run services:stop\" INT TERM && pipenv run dv:flat'"
+"dev" = "sh -c 'trap \"pipenv run services:stop\" INT TERM && pipenv run dev:flat'"
 "dev:flat" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "migrate" = "python manage.py migrate"
+"makemigrations" = "sh -c 'pipenv run services:up && python manage.py makemigrations && pipenv run services:stop'"
 "runserver" = "python manage.py runserver"
 "services:up" = "docker compose -f infra/compose.yaml up -d"
 "services:stop" = "docker compose -f infra/compose.yaml stop"
