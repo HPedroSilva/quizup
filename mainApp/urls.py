@@ -28,4 +28,5 @@ urlpatterns = [
         views.UserProfileView.as_view(),
         name='user_profile',
     ),
+    path('signup/', views.UserCreationView.as_view(), name='signup'),
 ]

@@ -13,7 +13,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import ListView
 
-from mainApp.forms import ImportQuestionsForm
+from mainApp.forms import ImportQuestionsForm, UserCreateForm
 from mainApp.models import (
     LEVEL_CHOICES,
     Category,
@@ -21,6 +21,7 @@ from mainApp.models import (
     Option,
     Question,
     UserAnswer,
+    UserProfile,
 )
 
 
@@ -270,3 +271,14 @@ class ImportQuestionsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 class UserProfileView(LoginRequiredMixin, TemplateView):
     model = User
     template_name = 'user_profile.html'
+
+
+class UserCreationView(FormView):
+    form_class = UserCreateForm
+    template_name = 'createMatchForm.html'
+    success_url = reverse_lazy('mainapp:home')
+
+    def form_valid(self, form):
+        user = form.save()
+        UserProfile.objects.create(user=user)
+        return super().form_valid(form)
