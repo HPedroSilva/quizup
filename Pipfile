@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 django = "~=4.2.1"
 django-bootstrap-v5 = "~=1.0.11"
-psycopg2 = "~=2.9.6"
+psycopg2-binary = "*"
 
 [dev-packages]
 ipython = "~=8.14"
@@ -27,6 +27,7 @@ commitizen = "*"
 "dev:flat" = "sh -c 'pipenv run services:up && python infra/scripts/wait-for-postgres.py && pipenv run migrate && pipenv run runserver'"
 "migrate" = "python manage.py migrate"
 "makemigrations" = "sh -c 'pipenv run services:up && python manage.py makemigrations && pipenv run services:stop'"
+"collectstatic" = "python manage.py collectstatic --noinput --clear"
 "runserver" = "python manage.py runserver"
 "services:up" = "docker compose -f infra/compose.yaml up -d"
 "services:stop" = "docker compose -f infra/compose.yaml stop"
