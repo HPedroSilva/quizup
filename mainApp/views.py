@@ -275,7 +275,7 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
 
 class UserCreationView(FormView):
     form_class = UserCreateForm
-    template_name = 'createMatchForm.html'
+    template_name = 'registration/signup.html'
     success_url = reverse_lazy('mainapp:home')
 
     def form_valid(self, form):

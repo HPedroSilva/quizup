@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card" style="width: 100%; max-width: 400px; border-radius: 15px;">
+        <div class="card-body">
+            <h3 class="card-title text-center">Sign Up</h3>
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    Corrija os erros abaixo e tente novamente.
+                </div>
+            {% endif %}
+            <form method="post" action="{% url 'mainapp:signup' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+                <div class="form-group">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1|add_class:"form-control" }}
+                </div>
+                <div class="form-group">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2|add_class:"form-control" }}
+                </div>
+                <div class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-block" style="width: 100%;">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
